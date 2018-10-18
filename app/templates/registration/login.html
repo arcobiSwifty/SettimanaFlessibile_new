@@ -1,0 +1,104 @@
+{% load static %}
+
+
+<html lang="en" dir="ltr">
+  <head>
+    {% include 'head.html' %}
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <title>Login | Settimana Flessibile</title>
+  </head>
+  <body>
+    <div class="centered" id="loginscreen">
+
+      <div class="center">
+        <center><div id="errorfield"></div></center>
+        <center>Login</center>
+        <center>
+        <form method="POST">
+          <input type="text" placeholder="nome" id="usernamefield"><br>
+          <input type="password" placeholder="password" id="passwordfield">
+        </form>
+        <button id="submit" onclick="submit()">Login</button>
+      </center>
+      </div>
+
+    </div>
+
+<!--
+<form>
+  <div class="form-group">
+    <label for="exampleInputEmail1">Email address</label>
+    <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="Enter email">
+    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+  </div>
+  <div class="form-group">
+    <label for="exampleInputPassword1">Password</label>
+    <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+  </div>
+  <div class="form-check">
+    <input type="checkbox" class="form-check-input" id="exampleCheck1">
+    <label class="form-check-label" for="exampleCheck1">Check me out</label>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+-->
+
+
+  </body>
+  <script>
+
+
+function update_dimensions() {
+  var screen_height = $(document).height();
+  var screen_width = $(document).width();
+  $('#loginscreen').height((screen_height*0.66)+'px');
+  $('#loginscreen').width((screen_width*0.65)+'px');
+}
+
+  $(document).ready(function() {
+    update_dimensions();
+  })
+
+  $(window).resize(function() {
+    update_dimensions();
+});
+
+function getCookie(name) {var cookieValue = null;if (document.cookie && document.cookie != '') {var cookies = document.cookie.split(';');
+       for (var i = 0; i < cookies.length; i++) {var cookie = jQuery.trim(cookies[i]);if (cookie.substring(0, name.length + 1) == (name + '=')) {
+         cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));break;}}}return cookieValue;}
+ var csrftoken = getCookie('csrftoken');function csrfSafeMethod(method) {return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));}
+
+function submit() {
+
+     var username = $('#usernamefield').val();
+     var password = $('#passwordfield').val();
+
+     var csrftoken = getCookie('csrftoken');
+     $.ajax({
+       beforeSend: function(xhr, settings) {
+       if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+         xhr.setRequestHeader("X-CSRFToken", csrftoken);
+         }
+       },
+       url: '/login/',
+       data: {
+         'username': username,
+         'password': password
+       },
+       method: 'POST',
+       datatype: 'json',
+       success: function(data) {
+       if (data['success']) {
+         window.location.replace("/home/");
+       }
+       else {
+         $('#errorfield').html(data['error'])
+       }
+       }
+     });
+
+}
+
+  </script>
+
+</html>
