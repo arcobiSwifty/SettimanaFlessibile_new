@@ -28,7 +28,9 @@ class JSONField(models.TextField):
             value = json.dumps(value, cls=DjangoJSONEncoder)
         return value
 
-
+class Aula(models.Model):
+    nome_aula = models.CharField(max_length=100)
+    capacita = models.IntegerField(default=30)
 
 class Giorno(models.Model):
     giorno_della_settimana = models.CharField(
@@ -73,6 +75,8 @@ class Corso(models.Model):
     is_progressive = models.BooleanField(default=True)
 
     fasce = models.ManyToManyField('Fascia')
+
+    aula = models.ForeignKey('Aula', on_delete=models.CASCADE, related_name='aula')
 
     creatore = models.ForeignKey('Utente', on_delete=models.CASCADE, related_name='creatore')
 
