@@ -68,6 +68,9 @@ class Fascia(models.Model):
 
 class Corso(models.Model):
 
+
+    corso_id = models.IntegerField()
+
     nome = models.CharField(max_length=100)
 
     descrizione = models.TextField(max_length=1500)
@@ -92,6 +95,9 @@ class Utente(models.Model):
 
     nome = models.CharField(max_length=150)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
+
+ 
+    #should be corsi a cui è iscritto id
     iscrizioni = models.ManyToManyField('Corso', related_name='iscrizioni')
 
     classe = models.IntegerField(default=1,validators=[MaxValueValidator(5), MinValueValidator(1)])

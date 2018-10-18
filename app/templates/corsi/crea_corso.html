@@ -7,14 +7,14 @@
 <h1>crea un corso</h1>
 <p>rifai la grafica</p>
 
-<div class="line">
-
+<div class="line"></div>
+<div id="error"></div>
 {{ crea_corso_form.as_p }}
 
 {% for fascia in fasce %}
-<button id="{{fascia}}button" class="fasciabutton">{{fascia}}</button>
+<button class="fasciabutton" onclick="aggiungifascia('{{fascia}}')">{{fascia}}</button>
 {% endfor %}
-<p>Nota: inserisci nome, cognome e classe (es: Mario Rossi 4a) degli studenti che terranno il corso</p>
+<p>Nota: inserisci nome, cognome e classe (es: Mario Rossi 1a) degli studenti che terranno il corso</p>
 <div class="ospitanti"></div>
 nome e cognome: <input type="text" id="ospitanti" placeholder="aggiungi studente ospitante...">
 classe: <input type="text" id="classedellospitante" placeholder="">
@@ -27,10 +27,77 @@ classe: <input type="text" id="classedellospitante" placeholder="">
 
 
 <script>
+//messaggi a chiunque abbia strane idee sulla sicurezza del mio codice
+console.log('Whooo, hai scoperto la console del sito! Chi sei, un hacker?')
+console.log('Nel caso ti stessero venendo strane idee, sappi che il server esegue verifiche server-side contro SQL-injection, brute force e simili.')
+console.log('P.S: Se sei un programmatore e vorresti aiutare a sviluppare la settimana flessibile, iscriviti al corso: "come è stato fatto questo sito".')
+
+
+var fascia = []
+
+//valida l'input. viene poi compiuta anche una seconda validazione lato server. Questa funzione
+//esiste solo per ridurre il numero di caricamenti pagine e tempo atteso dall'utente.
+function validate(nome, descrizione, nome_cognome, classe, fasce) {
+  if (nome == '') {
+    $('#error').html('Per favore compila il campo "nome"')
+    return false}
+  if (descrizione == '') {
+    $('#error').html('Per favore compila il campo "descrizione"')
+    return false}
+  if (classe == '' && nome_cognome != '') {
+    $('#error').html('Per favore compila il campo "classe"')
+    return false}
+  if (fasce.length < 1) {
+    $('#error').html('Seleziona almeno una fascia in cui il tuo corso si deve svolgere')
+    return false}
+  if (nome_cognome.split(' ').length < 2) {
+    $('#error').html('Per favore specifica sia il nome che il cognome dello studente')
+  }
+  var l = nome_cognome.replace(/[^A-Z]/g, "").length;
+  if (l < nome_cognome.split(' ').length && nome_cognome != '') {
+    $('#error').html('Usa lettere maiuscole all\'inizio del nome e del cognome')
+    return false}
+  if (classe.length != 2) {
+    $('#error').html('Per favore immetti una classe valida, nel formato numero, sezione (esempio: 4f o 4F)')
+    return false}
+  c = classe[0]
+  if (((c == '1' || c == '2' || c == '3' || c == '4' || c == '5') == false) && nome_cognome != '') {
+    $('#error').html('Per favore immetti una classe valida, partendo dal numero (esempio: 4f o 5q)')
+    return false}
+  $('#error').html('')
+  return true
+}
 
 function crea() {
 
-  
+  var nome = $('#id_nome').val();
+  var descrizione = $('#id_descrizione').val();
+  var is_progressive = $('#id_is_progressive').is(':checked');
+
+  var fasce = fascia
+  var nome_cognome = $('#ospitanti').val();
+  var classe = $('#classedellospitante').val();
+
+  console.log(validate(nome, descrizione, nome_cognome, classe, fasce))
+
+}
+
+function aggiungifascia(str) {
+  if (fascia.includes(str)) {
+    var index = fascia.indexOf(str);
+    if (index > -1) {
+      fascia.splice(index, 1);
+    }
+    console.log('rimuovo ' + str + ' alle fasce selezionate')
+  } else {
+    fascia.push(str)
+    console.log('aggiungo ' + str + ' alle fasce selezionate')
+  }
+
+}
+
+function aggiungi_ospitanti() {
+
 }
 
 </script>
