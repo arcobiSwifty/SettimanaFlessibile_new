@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 
 from .models import Corso, Utente, Giorno, Fascia
+from .forms import CreaCorso
 
 
 giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì']
@@ -43,7 +44,9 @@ def create_user(request):
 
 def create_corso(request):
 	if request.method == 'GET':
-		return render(request, 'registration/crea_corso.html')
+		form = CreaCorso()
+		fasce = Fascia.objects.all()
+		return render(request, 'corsi/crea_corso.html', {'crea_corso_form': form, 'fasce': fasce})
 
 
 @login_required(login_url='/login/')

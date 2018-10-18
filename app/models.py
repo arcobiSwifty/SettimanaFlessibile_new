@@ -68,6 +68,8 @@ class Corso(models.Model):
 
     nome = models.CharField(max_length=100)
 
+    descrizione = models.TextField(max_length=1500)
+
     is_progressive = models.BooleanField(default=True)
 
     fasce = models.ManyToManyField('Fascia')

@@ -6,11 +6,29 @@
 
 <h1>crea un corso</h1>
 <p>rifai la grafica</p>
-<input placeholder="titolo" id="titolo" type="text">
-<input type="checkbox" name="Progressivo" id="is_progressive">
 
-<input type="text" name="studenti referenti" id="studenti" placeholder="studenti ospitanti"><button id="aggiungi studenti">Aggiungi</button>
-<input type="text" name="esperti esterni" placeholder="esperti esterni" id="esperti"><button id="aggiungi esperto">Aggiungi</button>
+<div class="line">
 
+{{ crea_corso_form.as_p }}
+
+{% for fascia in fasce %}
+<button id="{{fascia}}button" class="fasciabutton">{{fascia}}</button>
+{% endfor %}
+<p>Nota: inserisci nome, cognome e classe (es: Mario Rossi 4a) degli studenti che terranno il corso</p>
+<div class="ospitanti"></div>
+nome e cognome: <input type="text" id="ospitanti" placeholder="aggiungi studente ospitante...">
+classe: <input type="text" id="classedellospitante" placeholder="">
+<button id="aggiungiospitante">Aggiungi</button>
+
+<p>Nota: premendo questo bottone verrà creato il corso</p>
+<button>Crea</button>
 </div>
+
+
+
+<script>
+
+
+
+</script>
 {% endblock %}
