@@ -4,43 +4,166 @@
 
 <div class="container">
 
-<h1>crea un corso</h1>
-<p>rifai la grafica</p>
+  <h1>crea un corso</h1>
+  <p>(Nota) rifai la grafica</p>
 
-<div class="line"></div>
-<div id="error"></div>
-{{ crea_corso_form.as_p }}
+  <div class="line"></div>
 
-{% for fascia in fasce %}
-<button class="fasciabutton" onclick="aggiungifascia('{{fascia}}')">{{fascia}}</button>
-{% endfor %}
-<p>Nota: inserisci nome, cognome e classe (es: Mario Rossi 1a) degli studenti che terranno il corso</p>
-<div class="ospitanti"></div>
-nome e cognome: <input type="text" id="ospitanti" placeholder="aggiungi studente ospitante...">
-classe: <input type="text" id="classedellospitante" placeholder="">
-<button id="aggiungiospitante">Aggiungi</button>
+  <div id="error" class="alert alert-danger"></div>
 
-<p>Nota: premendo questo bottone verrà creato il corso</p>
-<button onclick="crea()">Crea</button>
+  <div class="myform">
+    <!-- implelement creatore server side
+    <div class="creator"><p>Creatore</p></div>-->
+
+    {{ crea_corso_form.as_p }}
+
+    {% for fascia in fasce %}
+      <input type="button" value="{{fascia}}" class="fasciabutton btn btn-secondary" onclick="aggiungi_fascia(this)">
+    {% endfor %}
+
+    <div class="line"></div>
+
+    <div class="aggiungiospitantiform">
+      <p>Nota: inserisci nome, cognome e classe (es: Mario Rossi 1a) degli studenti che terranno il corso</p>
+      <div class="ospitanti"></div>
+
+      nome e cognome: <input type="text" id="ospitanti" placeholder="aggiungi studente ospitante...">
+      classe: <input type="text" id="classedellospitante" placeholder="">
+      <button id="aggiungiospitante" onclick="aggiungi_studente()">Aggiungi</button>
+    </div>
+
+    <div class="line"></div>
+
+    <p>Nota: premendo questo bottone verrà creato il corso</p>
+    <button onclick="crea_corso(this)" class="btn btn-primary">Crea</button>
+  </div>
+
 </div>
 
-
-
 <script>
+var aula = ""
+var fascia = []
+var studenti_referenti = []
+var classi = []
+
+//page rendering
+$(document).ready(function () {
+  $('#creacorso').toggleClass('active');
+  $('#tutticorsi').removeClass('active');
+  $('#tuoicorsi').removeClass('active');
+  $('#laclasse').removeClass('active');
+
+  $('#id_aula').on('change',function(){
+    aula= $("#id_aula option:selected").text();
+  });
+})
 //messaggi a chiunque abbia strane idee sulla sicurezza del mio codice
 console.log('Whooo, hai scoperto la console del sito! Chi sei, un hacker?')
 console.log('Nel caso ti stessero venendo strane idee, sappi che il server esegue verifiche server-side contro SQL-injection, brute force e simili.')
-console.log('P.S: Se sei un programmatore e vorresti aiutare a sviluppare la settimana flessibile, iscriviti al corso: "come è stato fatto questo sito".')
+console.log('P.S: if (sei un programmatore && vorresti aiutare a sviluppare la settimana flessibile) {iscriviti al corso: "come è stato fatto questo sito}".')
+
+//fasce
+function toogle_fascia(str) {
+  if (fascia.includes(str)) {
+    var index = fascia.indexOf(str);
+    if (index > -1) {fascia.splice(index, 1);}
+  } else {fascia.push(str)}
+}
+function aggiungi_fascia(nome_fascia) {
+  var x = nome_fascia;
+  x.classList.toggle('btn-info');
+  x.classList.toggle('btn-secondary');
+  var new_button = x.parentNode.replaceChild(x, nome_fascia);
+  toogle_fascia(x.value)
+}
+
+function getCookie(name) {var cookieValue = null;if (document.cookie && document.cookie != '') {var cookies = document.cookie.split(';');
+       for (var i = 0; i < cookies.length; i++) {var cookie = jQuery.trim(cookies[i]);if (cookie.substring(0, name.length + 1) == (name + '=')) {
+         cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));break;}}}return cookieValue;}
+ var csrftoken = getCookie('csrftoken');function csrfSafeMethod(method) {return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));}
+
+//studenti referenti
+function validate_studente(n, c) {
+  //temporary, waiting implementation
+  return true
+}
+function aggiungi_studente() {
+  nome_cognome = $('#ospitanti').val();
+  classe = $('#classedellospitante').val();
+  if (validate_studente(nome_cognome, classe) == true) {
+    var button = '<button class="btn btn-primary" onclick="rimuovi_studente(this)">Rimuovi</button>';
+    var text = `<div><span>${nome_cognome}</span>, ${classe}. ${button}</div<br>`;
+    $('.ospitanti').append(text);
+    studenti_referenti.push(nome_cognome);
+  }
+}
+function rimuovi_studente(studente) {
+  studenti_referenti.splice( fascia.indexOf(studente.parentNode.firstChild.innerHTML), 1);
+  studente.parentNode.parentNode.removeChild(studente.parentNode);
+}
+
+function validate_data() {
+  //temporary, waiting implementation
+  return true
+}
+
+function crea_corso(crea_btn) {
+  crea_btn.innerHTML = 'Creando il corso...';
 
 
-var fascia = []
+  var titolo = $('#id_nome').val();
+  var descrizione = $('#id_descrizione').val();
+  var progressivo = $('#id_is_progressive').is(':checked');
+  var a = aula
+  var fasce = fascia;
+  var ospiti = studenti_referenti;
 
+  if (validate_data() == false) {
+    crea_btn.innerHTML = 'crea';
+    return;
+  }
+
+  var csrftoken = getCookie('csrftoken');
+  $.ajax({
+    beforeSend: function(xhr, settings) {
+      if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+      }
+    },
+    url: '/creacorso/',
+    data: {
+      'titolo': titolo,
+      'descrizione': descrizione,
+      'is_progressive': progressivo,
+      'fasce': fasce,
+      'ospiti': ospiti,
+      'aula': a,
+      'classi': classi
+    },
+    method: 'POST',
+    datatype: 'json',
+    success: function(r_d) {
+      if (r_d['success']) {
+        window.location.replace("/");}
+      else {
+        $('#error').html(r_d['error'])
+      }
+    }
+});
+
+}
+
+
+/*
 //valida l'input. viene poi compiuta anche una seconda validazione lato server. Questa funzione
 //esiste solo per ridurre il numero di caricamenti pagine e tempo atteso dall'utente.
 function validate(nome, descrizione, nome_cognome, classe, fasce) {
+  /*
   if (nome == '') {
     $('#error').html('Per favore compila il campo "nome"')
     return false}
+    */
+    /*
   if (descrizione == '') {
     $('#error').html('Per favore compila il campo "descrizione"')
     return false}
@@ -50,6 +173,8 @@ function validate(nome, descrizione, nome_cognome, classe, fasce) {
   if (fasce.length < 1) {
     $('#error').html('Seleziona almeno una fascia in cui il tuo corso si deve svolgere')
     return false}
+    */
+    /*
   if (nome_cognome.split(' ').length < 2) {
     $('#error').html('Per favore specifica sia il nome che il cognome dello studente')
   }
@@ -57,15 +182,21 @@ function validate(nome, descrizione, nome_cognome, classe, fasce) {
   if (l < nome_cognome.split(' ').length && nome_cognome != '') {
     $('#error').html('Usa lettere maiuscole all\'inizio del nome e del cognome')
     return false}
+    */
+    /*
   if (classe.length != 2) {
     $('#error').html('Per favore immetti una classe valida, nel formato numero, sezione (esempio: 4f o 4F)')
     return false}
+
   c = classe[0]
   if (((c == '1' || c == '2' || c == '3' || c == '4' || c == '5') == false) && nome_cognome != '') {
-    $('#error').html('Per favore immetti una classe valida, partendo dal numero (esempio: 4f o 5q)')
+    $('#error').html('Per favore immetti una classe valida, partendo dal numero (esempio: 4f o 5h)')
     return false}
+    */
+    /*
   $('#error').html('')
   return true
+
 }
 
 function crea() {
@@ -74,11 +205,60 @@ function crea() {
   var descrizione = $('#id_descrizione').val();
   var is_progressive = $('#id_is_progressive').is(':checked');
 
-  var fasce = fascia
+  var fasce = fascia;
   var nome_cognome = $('#ospitanti').val();
   var classe = $('#classedellospitante').val();
 
-  console.log(validate(nome, descrizione, nome_cognome, classe, fasce))
+  var ospitanti = []
+
+  var is_valid = validate(nome, descrizione, nome_cognome, classe, fasce);
+
+  if (is_valid) {
+    send_data([nome, descrizione, is_progressive, fasce, ospitanti, is_valid])
+  }
+
+}
+
+function getCookie(name) {var cookieValue = null;if (document.cookie && document.cookie != '') {var cookies = document.cookie.split(';');
+       for (var i = 0; i < cookies.length; i++) {var cookie = jQuery.trim(cookies[i]);if (cookie.substring(0, name.length + 1) == (name + '=')) {
+         cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));break;}}}return cookieValue;}
+ var csrftoken = getCookie('csrftoken');function csrfSafeMethod(method) {return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));}
+
+function send_data(data) {
+  var nome = data[0];
+  var descrizione = data[1];
+  var is_progressive = data[2];
+  var fasce = data[3];
+  var ospitanti = data[4];
+
+  if (data[5] != true) {
+    return
+  }
+
+  var csrftoken = getCookie('csrftoken');
+  $.ajax({
+    beforeSend: function(xhr, settings) {
+      if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+      }
+    },
+    url: '/creacorso/',
+    data: {
+      'nome': nome,
+      'descerizione': descrizione,
+      'is_progressive': is_progressive,
+      'fasce': fasce,
+      'ospitanti': ospitanti
+    },
+    method: 'POST',
+    datatype: 'json',
+    success: function(r_d) {
+      if (r_d['success']) {
+        window.location.replace("/home/");}
+      else {
+        alert(r_d['error'])}
+    }
+});
 
 }
 
@@ -88,7 +268,7 @@ function aggiungifascia(str) {
     if (index > -1) {
       fascia.splice(index, 1);
     }
-    console.log('rimuovo ' + str + ' alle fasce selezionate')
+    console.log('rimuovo ' + str + ' dalle fasce selezionate')
   } else {
     fascia.push(str)
     console.log('aggiungo ' + str + ' alle fasce selezionate')
@@ -96,9 +276,19 @@ function aggiungifascia(str) {
 
 }
 
+
+function validate() {}
+
 function aggiungi_ospitanti() {
 
+  var nome_cognome = $('#ospitanti').val()
+  var classe = $('#classedellospitante').val();
+
+  $('.ospitanti').append('<div id="' + nome_cognome + '">' + nome_cognome + ' ' + '<br>' + classe + '</div>')
+  $('.ospitanti').append('<button class="rimuoviButton btn" onclick="rimuovi_ospite(' + nome_cognome + ')")>rimuovi</button>')
 }
+*/
 
 </script>
+
 {% endblock %}

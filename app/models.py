@@ -29,8 +29,19 @@ class JSONField(models.TextField):
         return value
 
 class Aula(models.Model):
-    nome_aula = models.CharField(max_length=100)
+    nome_aula = models.CharField(
+        max_length=100,
+        choices=([
+            ('Palestra', 'Palestra'),
+            ('Aula Normale', 'Aula Normale'),
+            ('Aula Magna', 'Aula Magna'),
+            ('Laboratorio di informatica', 'Laboratorio di informatica'),
+        ]),
+    )
     capacita = models.IntegerField(default=30)
+
+    def __str__(self):
+        return self.nome_aula
 
 class Giorno(models.Model):
     giorno_della_settimana = models.CharField(
@@ -68,9 +79,6 @@ class Fascia(models.Model):
 
 class Corso(models.Model):
 
-
-    corso_id = models.IntegerField()
-
     nome = models.CharField(max_length=100)
 
     descrizione = models.TextField(max_length=1500)
@@ -91,12 +99,13 @@ class Corso(models.Model):
         return self.nome
 
 
+
 class Utente(models.Model):
 
     nome = models.CharField(max_length=150)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
 
- 
+
     #should be corsi a cui è iscritto id
     iscrizioni = models.ManyToManyField('Corso', related_name='iscrizioni')
 

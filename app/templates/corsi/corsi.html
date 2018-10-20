@@ -1,7 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
+Tutti i corsi: <br>
+{% for corso in corsi %}
 
+{{ corso.nome }}
+<br>
+{% endfor %}
 
 
 {% endblock %}

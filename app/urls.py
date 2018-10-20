@@ -4,6 +4,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.home),
+    url(r'^corsi/$', views.corsi),
     url(r'^iscrizione/$', views.iscrizione),
     url(r'^home/$', views.home),
     url(r'^login/$', views.login_page),
