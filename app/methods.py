@@ -15,7 +15,7 @@ class Corso_Delegate:
             f = Fascia.objects.get(giorno=giorno, fascia=n_fascia)
             fasce_list.append(f)
 
-        cr_obj = request.user.username
+        cr_obj = request.user
         creatore = Utente.objects.get(user=cr_obj)
 
         ospiti_list = list()
@@ -37,7 +37,7 @@ class Corso_Delegate:
 
         a = Aula.objects.get(nome_aula=aula)
 
-        c = Corso(nome=titolo, descrizione=descrizione, is_progressive=progressivo, aula=a)
+        c = Corso(nome=titolo, descrizione=descrizione, is_progressive=progressivo, aula=a, creatore=creatore)
         c.save()
 
         for o in ospiti_list:

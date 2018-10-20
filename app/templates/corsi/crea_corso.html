@@ -91,15 +91,17 @@ function aggiungi_studente() {
   nome_cognome = $('#ospitanti').val();
   classe = $('#classedellospitante').val();
   if (validate_studente(nome_cognome, classe) == true) {
-    var button = '<button class="btn btn-primary" onclick="rimuovi_studente(this)">Rimuovi</button>';
-    var text = `<div><span>${nome_cognome}</span>, ${classe}. ${button}</div<br>`;
+    var button = '<button class="btn btn-primary"onclick="rimuovi_studente(this)">Rimuovi</button>';
+    var text = `<div class="studenti"><span>${nome_cognome}</span>, <span>${classe}</span>. ${button}</div<br>`;
     $('.ospitanti').append(text);
     studenti_referenti.push(nome_cognome);
+    classi.push(classe)
   }
 }
 function rimuovi_studente(studente) {
-  studenti_referenti.splice( fascia.indexOf(studente.parentNode.firstChild.innerHTML), 1);
+  studenti_referenti.splice(studenti_referenti.indexOf(studente.parentNode.firstChild.innerHTML), 1);
   studente.parentNode.parentNode.removeChild(studente.parentNode);
+  classi.splice(classi.indexOf(studente.parentNode.children[1].innerHTML), 1);
 }
 
 function validate_data() {
@@ -110,13 +112,14 @@ function validate_data() {
 function crea_corso(crea_btn) {
   crea_btn.innerHTML = 'Creando il corso...';
 
-
   var titolo = $('#id_nome').val();
   var descrizione = $('#id_descrizione').val();
   var progressivo = $('#id_is_progressive').is(':checked');
   var a = aula
   var fasce = fascia;
   var ospiti = studenti_referenti;
+
+  console.log(classi)
 
   if (validate_data() == false) {
     crea_btn.innerHTML = 'crea';
@@ -144,7 +147,7 @@ function crea_corso(crea_btn) {
     datatype: 'json',
     success: function(r_d) {
       if (r_d['success']) {
-        window.location.replace("/");}
+        window.location.replace("/");crea_btn.innerHTML = 'crea';}
       else {
         $('#error').html(r_d['error'])
       }

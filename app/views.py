@@ -55,6 +55,10 @@ def create_corso(request):
 		ospiti = request.POST.get("ospiti", "")
 		aula = request.POST.get("aula", "")
 		classi = request.POST.get("classi", "")
+		if is_progressive == 'true':
+			is_progressive = True
+		else:
+			is_progressive = False
 
 		risposta = methods.Corso_Delegate.create_corso(request, titolo, descrizione, is_progressive, fasce, ospiti, aula, classi)
 		return JsonResponse(risposta)
