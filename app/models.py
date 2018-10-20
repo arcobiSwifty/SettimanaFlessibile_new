@@ -100,6 +100,17 @@ class Corso(models.Model):
     def __str__(self):
         return self.nome
 
+class Approvazione(models.Model):
+
+    corso = models.ForeignKey('Corso', on_delete=models.CASCADE)
+
+    studente = models.ForeignKey('Utente', on_delete=models.CASCADE)
+
+    approva = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.corso.nome
+
 
 
 class Utente(models.Model):

@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login
 
-from .models import Corso, Utente, Giorno, Fascia, Aula
+from .models import Corso, Utente, Giorno, Fascia, Aula, Approvazione
 from .forms import CreaCorso
 
 from . import methods
@@ -27,7 +27,7 @@ def login_page(request):
 		return JsonResponse({'error': 'password o nome utente sbagliato. Ricontrolla'})
 
 #IMPORTANTE: REMOVE THIS FUNCTION! ONLY FOR TESTING
-
+@login_required(login_url='/login/')
 def create_user(request):
 	if request.method == 'GET':
 		return render(request, 'registration/create_user.html', {})
@@ -42,6 +42,7 @@ def create_user(request):
 		Utente.objects.create(nome=username, user=user, classe=classe, sezione=sezione)
 		return JsonResponse({'success': True})
 
+@login_required(login_url='/login/')
 def create_corso(request):
 	if request.method == 'GET':
 		form = CreaCorso()
@@ -66,7 +67,9 @@ def create_corso(request):
 
 @login_required(login_url='/login/')
 def home(request):
-	return render(request, 'corsi/home.html', {'giorniDellaSettimana': giorni, 'categorieDisponibili': categorie})
+	u = Utente.objects.get(user=request.user)
+	approvazioni = Approvazione.objects.filter(studente=u)
+	return render(request, 'corsi/home.html', {'giorniDellaSettimana': giorni, 'categorieDisponibili': categorie, 'approvazioni': approvazioni})
 
 @login_required(login_url='/login/')
 def iscrizione(request):

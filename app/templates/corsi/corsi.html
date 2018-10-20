@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+{% for approvazione in approvazioni %}
+
+{% approvazione %}
+
+{% endfor %}
+
 Tutti i corsi: <br>
 {% for corso in corsi %}
 

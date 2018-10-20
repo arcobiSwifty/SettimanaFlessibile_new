@@ -1,11 +1,10 @@
-from .models import Corso, Utente, Giorno, Fascia, Aula
+from .models import Corso, Utente, Giorno, Fascia, Aula, Approvazione
 from django.contrib.auth.models import User
 
 
 class Corso_Delegate:
 
     def create_corso(request, titolo, descrizione, progressivo, fasce, ospiti, aula, classi):
-
 
         fasce_list = list()
         for fascia in fasce:
@@ -37,8 +36,11 @@ class Corso_Delegate:
 
         a = Aula.objects.get(nome_aula=aula)
 
-        c = Corso(nome=titolo, descrizione=descrizione, is_progressive=progressivo, aula=a, creatore=creatore)
+        c = Corso(nome=titolo, descrizione=descrizione, is_progressive=progressivo, aula=a, creatore=creatore, convalidato=False)
         c.save()
+
+        if creatore not in ospiti_list:
+            ospiti_list = [creatore] + ospiti_list
 
         for o in ospiti_list:
             c.ospitanti.add(o)
@@ -46,4 +48,10 @@ class Corso_Delegate:
             c.fasce.add(f)
 
         c.save()
+
+        for o in ospiti_list:
+            if (o == creatore) == False:
+                approvazione = Approvazione(corso = c, studente=o, approva=False)
+                approvazione.save()
+
         return {'success': True, 'errors': False, 'message': 'Corso creato con successo'}
