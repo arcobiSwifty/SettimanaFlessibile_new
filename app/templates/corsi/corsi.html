@@ -4,7 +4,7 @@
 
 {% for approvazione in approvazioni %}
 
-{% approvazione %}
+{{ approvazione }}
 
 {% endfor %}
 
@@ -16,6 +16,8 @@ Tutti i corsi: <br>
 {% endfor %}
 <script type="text/javascript">
 $(document).ready(function () {
+    $('#tutticorsi').toggleClass('active')
+    $('#homelink').toggleClass('active')
     $('#sidebarCollapse').on('click', function () {
         $('#sidebar').toggleClass('active');
     });

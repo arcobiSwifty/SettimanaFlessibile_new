@@ -48,11 +48,8 @@ var classi = []
 
 //page rendering
 $(document).ready(function () {
-  $('#creacorso').toggleClass('active');
-  $('#tutticorsi').removeClass('active');
-  $('#tuoicorsi').removeClass('active');
-  $('#laclasse').removeClass('active');
-
+  $('#creacorso').toggleClass('active')
+  $('#homelink').toggleClass('active')
   $('#id_aula').on('change',function(){
     aula= $("#id_aula option:selected").text();
   });
