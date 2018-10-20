@@ -36,7 +36,8 @@ def create_user(request):
 		password = request.POST.get("password", "")
 		sezione = request.POST.get("sezione", "")
 		classe = request.POST.get("classe", "")
-		user_create = User.objects.create_user(username, 'test@example.com', password)
+		if authenticate(username=username, password=password) is None:
+			user_create = User.objects.create_user(username, 'test@example.com', password)
 		user = authenticate(username=username, password=password)
 		Utente.objects.create(nome=username, user=user, classe=classe, sezione=sezione)
 		return JsonResponse({'success': True})

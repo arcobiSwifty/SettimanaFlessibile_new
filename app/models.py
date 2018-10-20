@@ -95,6 +95,8 @@ class Corso(models.Model):
 
     iscritti = models.ManyToManyField('Utente', related_name='iscritti')
 
+    convalidato = models.BooleanField(default=False)
+
     def __str__(self):
         return self.nome
 
