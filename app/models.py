@@ -128,8 +128,9 @@ class Utente(models.Model):
     hosted_courses = models.ManyToManyField('Corso')
 
     def is_fascia_taken(self, fascia_to_check):
-        iscrizione = Corso.objects.filter(iscritti__user=self.user).filter(fasce__fascia=fascia_to_check.fascia).filter(fasce_giorno=fascia_to_check.giorno).count()
+        iscrizione = self.iscrizioni.filter(fasce__fascia=fascia_to_check.fascia).filter(fasce__giorno=fascia_to_check.giorno).count()
         if iscrizione > 0:
+
             return True
         return False
 

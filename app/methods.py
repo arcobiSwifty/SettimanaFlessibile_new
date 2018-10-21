@@ -6,11 +6,14 @@ class Corso_Delegate:
 
     def create_corso(request, titolo, descrizione, progressivo, fasce, ospiti, aula, classi):
 
+
+        print(titolo, descrizione, progressivo, fasce, ospiti, aula, classi)
+
         fasce_list = list()
         for fascia in fasce:
-            n_giorno = fascia.split(', ')[0]
+            n_giorno = fascia.split(',')[0]
             giorno = Giorno.objects.get(giorno_della_settimana=n_giorno)
-            n_fascia = fascia.split(', ')[1]
+            n_fascia = fascia.split(',')[1][1:]
             f = Fascia.objects.get(giorno=giorno, fascia=n_fascia)
             fasce_list.append(f)
 
@@ -19,19 +22,19 @@ class Corso_Delegate:
 
 
         ospiti_list = list()
-        for ospite, counter in enumerate(ospiti):
+        for counter, ospite in enumerate(ospiti):
             o_str = ''.join(ospite.split()).lower()
             c_str = classi[counter].lower()
             u = Utente.objects.filter(nome=o_str, classe=c_str[0], sezione=c_str[1])
             if u.count() == 0:
                 return {'success': False, 'errors': True, 'error': "Lo studente {0} non esiste o non appartiene alla classe {1}".format(o_str, c_str)}
             u_obj = Utente.objects.get(nome=o_str, classe=c_str[0], sezione=c_str[1])
-            for fascia in fasce:
+            for fascia in fasce_list:
                 if u_obj.is_fascia_taken(fascia) == True:
                     return {'error': "Lo studente {0} non può ospitare questo corso perchè durante la fascia: \"{1}\" è ospite di un altro corso".format(o_str, fascia)}
             ospiti_list.append(u_obj)
 
-        for fascia in fasce:
+        for fascia in fasce_list:
             if creatore.is_fascia_taken(fascia) == True:
                 return {'error': "Lo studente {0} non può ospitare questo corso perchè durante la fascia: \"{1}\" è ospite di un altro corso".format(creatore, fascia)}
 
@@ -39,6 +42,7 @@ class Corso_Delegate:
 
         c = Corso(nome=titolo, descrizione=descrizione, is_progressive=progressivo, aula=a, creatore=creatore, convalidato=False)
         c.save()
+
 
         if creatore not in ospiti_list:
             ospiti_list = [creatore] + ospiti_list

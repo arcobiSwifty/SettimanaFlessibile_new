@@ -55,10 +55,11 @@ def create_corso(request):
 		titolo = request.POST.get("titolo", "")
 		descrizione = request.POST.get("descrizione", "")
 		is_progressive = request.POST.get("is_progressive", "")
-		fasce = request.POST.get("fasce", "")
-		ospiti = request.POST.get("ospiti", "")
+		fasce = request.POST.getlist("fasce[]", "")
+		ospiti = request.POST.getlist("ospiti[]", "")
 		aula = request.POST.get("aula", "")
-		classi = request.POST.get("classi", "")
+		classi = request.POST.getlist("classi[]", "")
+		print(classi)
 		if is_progressive == 'true':
 			is_progressive = True
 		else:

@@ -94,11 +94,13 @@ function aggiungi_studente() {
     studenti_referenti.push(nome_cognome);
     classi.push(classe)
   }
+  console.log(classi)
 }
 function rimuovi_studente(studente) {
   studenti_referenti.splice(studenti_referenti.indexOf(studente.parentNode.firstChild.innerHTML), 1);
   studente.parentNode.parentNode.removeChild(studente.parentNode);
   classi.splice(classi.indexOf(studente.parentNode.children[1].innerHTML), 1);
+  console.log(classi)
 }
 
 function validate_data() {
@@ -135,10 +137,10 @@ function crea_corso(crea_btn) {
       'titolo': titolo,
       'descrizione': descrizione,
       'is_progressive': progressivo,
-      'fasce': fasce,
-      'ospiti': ospiti,
+      'fasce[]': fasce,
+      'ospiti[]': ospiti,
       'aula': a,
-      'classi': classi
+      'classi[]': classi,
     },
     method: 'POST',
     datatype: 'json',
