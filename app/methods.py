@@ -75,3 +75,17 @@ class Corso_Delegate:
             return {'success': True}
         except:
             return {'error': 'Questo corso non esiste, è possibile che sia stato rimosso nel frattempo'}
+
+    def get_corsi(request):
+        studente = Utente.objects.get(user=request.user)
+        fasce = Fascia.objects.all()
+        iscrizioni = studente.iscrizioni.all()
+        iscrizioni_list = list()
+        for fascia in fasce:
+            i = iscrizioni.filter(fasce__giorno=fascia.giorno, fasce__fascia=fascia.fascia)
+            if i.count() == 0:
+                iscrizioni_list.append({'fascia': fascia, 'empty': True, 'titolo': '', 'id': 0})
+            else:
+                i_c = iscrizioni.get(fasce__giorno=fascia.giorno, fasce__fascia=fascia.fascia)
+                iscrizioni_list.append({'fascia': fascia, 'empty': False, 'titolo': i_c.nome, 'id': i_c.id})
+        return iscrizioni_list

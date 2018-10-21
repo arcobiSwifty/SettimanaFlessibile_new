@@ -6,6 +6,7 @@ from django.urls import path
 urlpatterns = [
     url(r'^$', views.home),
     url(r'^corsi/$', views.corsi),
+    url(r'^mieicorsi/$', views.miei_corsi),
     path(r'iscriviti/<idcorso>', views.iscrizione),
     url(r'^home/$', views.home),
     url(r'^login/$', views.login_page),

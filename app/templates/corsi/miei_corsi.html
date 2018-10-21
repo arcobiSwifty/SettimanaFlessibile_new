@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <div class="container">
+
+    {% for iscrizione in iscrizioni %}
+    fascia: {{iscrizione.fascia}}
+      {% if iscrizione.empty == False %}
+      <p id="{{iscrizione.id}}">titolo {{iscrizione.titolo}}</p>
+      {% else %}
+      <p>  questa fascia è vuota</p><br>
+      {% endif %}
+
+    {% endfor %}
+
+  </div>
+
+{% endblock %}

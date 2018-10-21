@@ -25,6 +25,10 @@ def login_page(request):
 			return JsonResponse({'success': 'true'})
 		return JsonResponse({'error': 'password o nome utente sbagliato. Ricontrolla'})
 
+def logout_view(request):
+	logout(request)
+	return redirect('/login/')
+
 #IMPORTANTE: REMOVE THIS FUNCTION! ONLY FOR TESTING
 @login_required(login_url='/login/')
 def create_user(request):
@@ -93,6 +97,9 @@ def corsi(request):
 	corsi = Corso.objects.all()
 	return render(request, 'corsi/corsi.html', {'corsi': corsi})
 
-def logout_view(request):
-	logout(request)
-	return redirect('/login/')
+
+@login_required(login_url='/login/')
+def miei_corsi(request):
+	iscrizioni = methods.Corso_Delegate.get_corsi(request)
+	fasce = Fascia.objects.all()
+	return render(request, 'corsi/miei_corsi.html', {'iscrizioni': iscrizioni, 'fasce': fasce})
