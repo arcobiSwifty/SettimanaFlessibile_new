@@ -1,13 +1,12 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import JsonResponse, HttpResponse, HttpResponseNotFound
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 
 from .models import Corso, Utente, Giorno, Fascia, Aula, Approvazione
 from .forms import CreaCorso
-
 from . import methods
 
 giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì']
@@ -81,8 +80,11 @@ def iscrizione(request, idcorso):
 		return render(request, 'corsi/iscrizione.html', {'corso': corso_iscrizione})
 	elif request.method == 'POST':
 		id_corso = request.POST.get("id_corso", "")
-		if (id_corso == corso) == False:
+		if (id_corso == id_corso) == False:
 			return JsonResponse({'error': 'internal server error (500).'})
+		studente = Utente.objects.get(user=request.user)
+		risposta = methods.Corso_Delegate.iscrivi_studente(studente.id, idcorso)
+		return JsonResponse(risposta)
 
 
 
@@ -90,3 +92,7 @@ def iscrizione(request, idcorso):
 def corsi(request):
 	corsi = Corso.objects.all()
 	return render(request, 'corsi/corsi.html', {'corsi': corsi})
+
+def logout_view(request):
+	logout(request)
+	return redirect('/login/')

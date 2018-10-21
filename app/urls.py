@@ -11,4 +11,5 @@ urlpatterns = [
     url(r'^login/$', views.login_page),
     url(r'^newuser/$', views.create_user),
     url(r'^creacorso/$', views.create_corso),
+    url(r'^logout/$', views.logout_view),
 ]

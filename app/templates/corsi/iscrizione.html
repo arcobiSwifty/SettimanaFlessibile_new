@@ -27,9 +27,7 @@
 	         cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));break;}}}return cookieValue;}
 	 var csrftoken = getCookie('csrftoken');function csrfSafeMethod(method) {return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));}
 
-
 		function iscrizione(id_corso, btn) {
-			btn.
 			var csrftoken = getCookie('csrftoken');
 			$.ajax({
 				beforeSend: function(xhr, settings) {
@@ -37,7 +35,7 @@
 						xhr.setRequestHeader("X-CSRFToken", csrftoken);
 					}
 				},
-				url: '/iscrizione/' + id_corso,
+				url: '/iscriviti/' + id_corso,
 				data: {
 					'id_corso': id_corso,
 				},
