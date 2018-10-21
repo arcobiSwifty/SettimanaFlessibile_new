@@ -5,14 +5,56 @@
 {% endblock %}
 
 {% block content %}
-	<div class="desktop">
-		ciao
-	</div>
+
+<div class="line"></div>
+
+<div id="error"></div>
+
+	<div class="pure-g">
+	    <div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2 centered-text"><p>titolo: {{ corso.nome }}</p></div>
+	    <div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2 centered-text"><p>descrizione: {{corso.descrizione}}</p></div>
+	    <div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2 centered-text"><p>aula: {{corso.aula.nome_aula}}</p></div>
+	    <div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2 centered-text"><p>progressivo: {{corso.is_progressive}}</p></div>
+			<div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2 centered-text"><p>creatore: {{corso.creatore.nome}}, {{corso.creatore.classe}}{{corso.creatore.sezione}}</p></div>
+	    <div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2 centered-text"><p>
+	      <button class="btn btn-primary" onclick="iscrizione({{corso.id}}, this)">Iscriviti</button>
+	    </p></div>
+
+	    <div class="line"></div>
 	<script type="text/javascript">
-	$(document).ready(function () {
-	    $('#sidebarCollapse').on('click', function () {
-	        $('#sidebar').toggleClass('active');
-	    });
-	});
+	function getCookie(name) {var cookieValue = null;if (document.cookie && document.cookie != '') {var cookies = document.cookie.split(';');
+	       for (var i = 0; i < cookies.length; i++) {var cookie = jQuery.trim(cookies[i]);if (cookie.substring(0, name.length + 1) == (name + '=')) {
+	         cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));break;}}}return cookieValue;}
+	 var csrftoken = getCookie('csrftoken');function csrfSafeMethod(method) {return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));}
+
+
+		function iscrizione(id_corso, btn) {
+			btn.
+			var csrftoken = getCookie('csrftoken');
+			$.ajax({
+				beforeSend: function(xhr, settings) {
+					if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+						xhr.setRequestHeader("X-CSRFToken", csrftoken);
+					}
+				},
+				url: '/iscrizione/' + id_corso,
+				data: {
+					'id_corso': id_corso,
+				},
+				method: 'POST',
+				datatype: 'json',
+				success: function(r_d) {
+					if (r_d['success']) {
+						btn.innerHTML = 'iscrizione effettuata'
+						window.location.replace("/success/"+id_corso);;}
+					else {
+						$('#error').html(r_d['error']);
+						btn.innerHTML = 'Iscriviti';
+					}
+				}
+		});
+
+
+		}
 	</script>
 {% endblock %}

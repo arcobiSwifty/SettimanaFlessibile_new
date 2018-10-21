@@ -11,6 +11,10 @@
     }
 
 /* header file */
+.centered-text {
+  text-align:center;
+}
+
 .header {
 
     color: white;

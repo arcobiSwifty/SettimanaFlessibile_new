@@ -4,6 +4,11 @@
 <html>
 
 <head>
+
+  {% block head %}
+
+  {% endblock %}
+
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -68,13 +73,12 @@
             </ul>
         </nav>
 
-
         <div id="content">
 
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <div class="container-fluid">
 
-                    <button type="button" id="sidebarCollapse" class="btn btn-info">
+                    <button type="button" id="menuButton" class="btn btn-info" onclick="show_menu()">
                         <i class="fas fa-align-left"></i>
                         <span>Menu</span>
                     </button>
@@ -122,12 +126,11 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 
     <script type="text/javascript">
-        $(document).ready(function () {
-            $('#sidebarCollapse').on('click', function () {
-                $('#sidebar').toggleClass('active');
-            });
-        });
+        function show_menu() {
+          $('#sidebar').toggleClass('active');
+        }
     </script>
+
 </body>
 
 </html>

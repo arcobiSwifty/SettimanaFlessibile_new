@@ -17,6 +17,7 @@ class Corso_Delegate:
         cr_obj = request.user
         creatore = Utente.objects.get(user=cr_obj)
 
+
         ospiti_list = list()
         for ospite, counter in enumerate(ospiti):
             o_str = ''.join(ospite.split()).lower()
@@ -49,9 +50,24 @@ class Corso_Delegate:
 
         c.save()
 
+        creatore.hosted_courses.add(c)
+        creatore.save()
+
         for o in ospiti_list:
             if (o == creatore) == False:
                 approvazione = Approvazione(corso = c, studente=o, approva=False)
                 approvazione.save()
 
         return {'success': True, 'errors': False, 'message': 'Corso creato con successo'}
+
+
+    def iscrivi_studente(studente_id, corso_id):
+        try:
+            corso = Corso.objects.get(pk=corso_id)
+            corso.iscritti.add(studente)
+            corso.save()
+            studente = Utente.objects.get(pk=studente_id)
+            studente.iscrizioni.add(corso)
+            studente.save()
+        except:
+            return {'error': 'Questo corso non esiste, è possibile che sia stato rimosso nel frattempo'}

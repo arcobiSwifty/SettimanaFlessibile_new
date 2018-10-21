@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, HttpResponseNotFound
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -72,8 +72,19 @@ def home(request):
 	return render(request, 'corsi/home.html', {'giorniDellaSettimana': giorni, 'categorieDisponibili': categorie, 'approvazioni': approvazioni})
 
 @login_required(login_url='/login/')
-def iscrizione(request):
-	return render(request, 'corsi/iscrizione.html')
+def iscrizione(request, idcorso):
+	if request.method == 'GET':
+		try:
+			corso_iscrizione = Corso.objects.get(pk=int(idcorso))
+		except:
+			return HttpResponseNotFound('<h1>Questo corso non esiste</h1>')
+		return render(request, 'corsi/iscrizione.html', {'corso': corso_iscrizione})
+	elif request.method == 'POST':
+		id_corso = request.POST.get("id_corso", "")
+		if (id_corso == corso) == False:
+			return JsonResponse({'error': 'internal server error (500).'})
+
+
 
 @login_required(login_url='/login/')
 def corsi(request):
