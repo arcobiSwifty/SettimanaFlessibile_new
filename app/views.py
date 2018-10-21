@@ -13,6 +13,10 @@ giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì']
 categorie = ['Sportivo', 'Film', 'Altro']
 
 
+@login_required(login_url='/login/')
+def success_view(request, id_corso):
+	return HttpResponse('Iscrizione effettuata (rifai la grafica di questa pagina)')
+
 def login_page(request):
 	if request.method == 'GET':
 		return render(request, 'registration/login.html')
@@ -90,8 +94,6 @@ def iscrizione(request, idcorso):
 		studente = Utente.objects.get(user=request.user)
 		risposta = methods.Corso_Delegate().iscrivi_studente(studente.id, idcorso)
 		return JsonResponse(risposta)
-
-
 
 @login_required(login_url='/login/')
 def corsi(request):
