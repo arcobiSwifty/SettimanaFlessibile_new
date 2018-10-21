@@ -64,10 +64,13 @@ class Corso_Delegate:
     def iscrivi_studente(studente_id, corso_id):
         try:
             corso = Corso.objects.get(pk=corso_id)
-            corso.iscritti.add(studente)
-            corso.save()
             studente = Utente.objects.get(pk=studente_id)
+            for fascia in corso.fasce:
+                if studente.is_fascia_taken(fascia):
+                    return {'error': 'Non è stato possibile iscriversi al corso poichè alcune fasce erano già occupate.'}
+            corso.iscritti.add(studente)
             studente.iscrizioni.add(corso)
+            corso.save()
             studente.save()
         except:
             return {'error': 'Questo corso non esiste, è possibile che sia stato rimosso nel frattempo'}
