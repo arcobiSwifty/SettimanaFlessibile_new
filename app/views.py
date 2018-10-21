@@ -65,7 +65,7 @@ def create_corso(request):
 		else:
 			is_progressive = False
 
-		risposta = methods.Corso_Delegate.create_corso(request, titolo, descrizione, is_progressive, fasce, ospiti, aula, classi)
+		risposta = methods.Corso_Delegate().create_corso(request, titolo, descrizione, is_progressive, fasce, ospiti, aula, classi)
 		return JsonResponse(risposta)
 
 
@@ -88,7 +88,7 @@ def iscrizione(request, idcorso):
 		if (id_corso == id_corso) == False:
 			return JsonResponse({'error': 'internal server error (500).'})
 		studente = Utente.objects.get(user=request.user)
-		risposta = methods.Corso_Delegate.iscrivi_studente(studente.id, idcorso)
+		risposta = methods.Corso_Delegate().iscrivi_studente(studente.id, idcorso)
 		return JsonResponse(risposta)
 
 
@@ -101,6 +101,6 @@ def corsi(request):
 
 @login_required(login_url='/login/')
 def miei_corsi(request):
-	iscrizioni = methods.Corso_Delegate.get_corsi(request)
+	iscrizioni = methods.Corso_Delegate().get_corsi(request)
 	fasce = Fascia.objects.all()
 	return render(request, 'corsi/miei_corsi.html', {'iscrizioni': iscrizioni, 'fasce': fasce})

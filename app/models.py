@@ -130,7 +130,6 @@ class Utente(models.Model):
     def is_fascia_taken(self, fascia_to_check):
         iscrizione = self.iscrizioni.filter(fasce__fascia=fascia_to_check.fascia).filter(fasce__giorno=fascia_to_check.giorno).count()
         if iscrizione > 0:
-
             return True
         return False
 

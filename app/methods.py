@@ -4,7 +4,37 @@ from django.contrib.auth.models import User
 
 class Corso_Delegate:
 
-    def create_corso(request, titolo, descrizione, progressivo, fasce, ospiti, aula, classi):
+
+    def iscrivi_studente(self, studente_id, corso_id):
+        try:
+            corso = Corso.objects.get(pk=corso_id)
+            studente = Utente.objects.get(pk=studente_id)
+            for fascia in corso.fasce.all():
+                if studente.is_fascia_taken(fascia):
+                    return {'error': 'Non è stato possibile iscriversi al corso poichè alcune fasce erano già occupate.'}
+            corso.iscritti.add(studente)
+            studente.iscrizioni.add(corso)
+            corso.save()
+            studente.save()
+            return {'success': True}
+        except:
+            return {'error': 'Questo corso non esiste, è possibile che sia stato rimosso nel frattempo'}
+
+    def get_corsi(self, request):
+        studente = Utente.objects.get(user=request.user)
+        fasce = Fascia.objects.all()
+        iscrizioni = studente.iscrizioni.all()
+        iscrizioni_list = list()
+        for fascia in fasce:
+            i = iscrizioni.filter(fasce__giorno=fascia.giorno, fasce__fascia=fascia.fascia)
+            if i.count() == 0:
+                iscrizioni_list.append({'fascia': fascia, 'empty': True, 'titolo': '', 'id': 0})
+            else:
+                i_c = iscrizioni.get(fasce__giorno=fascia.giorno, fasce__fascia=fascia.fascia)
+                iscrizioni_list.append({'fascia': fascia, 'empty': False, 'titolo': i_c.nome, 'id': i_c.id})
+        return iscrizioni_list
+
+    def create_corso(self, request, titolo, descrizione, progressivo, fasce, ospiti, aula, classi):
 
 
         print(titolo, descrizione, progressivo, fasce, ospiti, aula, classi)
@@ -62,34 +92,6 @@ class Corso_Delegate:
                 approvazione = Approvazione(corso = c, studente=o, approva=False)
                 approvazione.save()
 
+        self.iscrivi_studente(creatore.id, c.id)
+
         return {'success': True, 'errors': False, 'message': 'Corso creato con successo'}
-
-
-    def iscrivi_studente(studente_id, corso_id):
-        try:
-            corso = Corso.objects.get(pk=corso_id)
-            studente = Utente.objects.get(pk=studente_id)
-            for fascia in corso.fasce.all():
-                if studente.is_fascia_taken(fascia):
-                    return {'error': 'Non è stato possibile iscriversi al corso poichè alcune fasce erano già occupate.'}
-            corso.iscritti.add(studente)
-            studente.iscrizioni.add(corso)
-            corso.save()
-            studente.save()
-            return {'success': True}
-        except:
-            return {'error': 'Questo corso non esiste, è possibile che sia stato rimosso nel frattempo'}
-
-    def get_corsi(request):
-        studente = Utente.objects.get(user=request.user)
-        fasce = Fascia.objects.all()
-        iscrizioni = studente.iscrizioni.all()
-        iscrizioni_list = list()
-        for fascia in fasce:
-            i = iscrizioni.filter(fasce__giorno=fascia.giorno, fasce__fascia=fascia.fascia)
-            if i.count() == 0:
-                iscrizioni_list.append({'fascia': fascia, 'empty': True, 'titolo': '', 'id': 0})
-            else:
-                i_c = iscrizioni.get(fasce__giorno=fascia.giorno, fasce__fascia=fascia.fascia)
-                iscrizioni_list.append({'fascia': fascia, 'empty': False, 'titolo': i_c.nome, 'id': i_c.id})
-        return iscrizioni_list
