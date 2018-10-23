@@ -85,7 +85,7 @@ class Corso(models.Model):
 
     is_progressive = models.BooleanField(default=True)
 
-    corsi = models.ManyToManyField('SottoCorso')
+    fasce = models.ManyToManyField('Fascia')
 
     aula = models.ForeignKey('Aula', on_delete=models.CASCADE, related_name='aula')
 
@@ -122,9 +122,6 @@ class Approvazione(models.Model):
     def __str__(self):
         return self.corso.nome
 
-class SottoCorso(models.Model):
-     fasce = models.ManyToManyField('Fascia')
-     corso = models.ManyToManyField('Corso')
 
 
 class Utente(models.Model):
