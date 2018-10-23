@@ -76,7 +76,7 @@ def create_corso(request):
 @login_required(login_url='/login/')
 def home(request):
 	u = Utente.objects.get(user=request.user)
-	approvazioni = Approvazione.objects.filter(studente=u)
+	approvazioni = Approvazione.objects.filter(studente=u).filter(approva=False)
 	return render(request, 'corsi/home.html', {'giorniDellaSettimana': giorni, 'categorieDisponibili': categorie, 'approvazioni': approvazioni})
 
 @login_required(login_url='/login/')
@@ -96,11 +96,12 @@ def iscrizione(request, idcorso):
 		return JsonResponse(risposta)
 
 
+#ottimizza
 @login_required(login_url='/login/')
 def rimuovi_iscrizione(request, idcorso):
-	corso = Corso.objects.get(pk=idcorso)
+	corso = Corso.objects.filter(pk=idcorso)
 	if corso.count() > 0:
-		response = methods.Corso_Delegate.disicrivi_studente(request.user, corso)
+		response = methods.Corso_Delegate.disicrivi_studente(request.user, Corso.objects.get(pk=idcorso))
 		if response == False:
 			return HttpResponse('Il corso non è stato trovato o non è stato possibile disiscrivervi poichè sei nello staff del corso')
 	return redirect('/mieicorsi/')
@@ -134,7 +135,7 @@ def accetta_corso(request, idapprovazione):
 
 @login_required(login_url='/login/')
 def corsi(request):
-	corsi = Corso.objects.all()
+	corsi = Corso.objects.filter(convalidato=True)
 	return render(request, 'corsi/corsi.html', {'corsi': corsi})
 
 
