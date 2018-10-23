@@ -16,5 +16,12 @@ $(document).ready(function () {
 </script>
 
 Comunicazioni:
-lol
+lol<br>
+
+Approvazioni: <br>
+{% for approvazione in approvazioni %}
+  {{approvazione}}
+  <button class="btn btn-primary"><a href="accetta/{{approvazione.id}}">Accetta</a></button><br>
+{% endfor %}
+
 {% endblock %}

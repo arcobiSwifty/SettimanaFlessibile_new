@@ -112,6 +112,24 @@ def rimuovi_corso(request, idcorso):
 	response = methods.Corso_Delegate.rimuovi_corso(utente, corso)
 	return render(request, 'success.html', {'message': response['message']})
 
+
+@login_required(login_url='/login/')
+def accetta_corso(request, idapprovazione):
+	approvazione = Approvazione.objects.get(pk=idapprovazione)
+	studente = Utente.objects.get(user=request.user)
+	corso = approvazione.corso
+	approvazione.approva = True
+	iscrizione = methods.Corso_Delegate.iscrivi_studente_o(studente, corso)
+	approvazione.save()
+	if Approvazione.objects.filter(corso=corso).filter(approva=True).count() == 0:
+		corso.convalidato = True
+		corso.save()
+	if iscrizione['success']:
+		return render(request, 'success.html', {'message': 'Operazione avvenuta con successo'})
+	else:
+		return render(request, 'success.html', {'message': 'è avvenuto un errore durante la registrazione'})
+
+
 @login_required(login_url='/login/')
 def corsi(request):
 	corsi = Corso.objects.all()

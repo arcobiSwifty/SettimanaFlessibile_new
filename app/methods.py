@@ -11,14 +11,27 @@ class Corso_Delegate:
             studente = Utente.objects.get(pk=studente_id)
             for fascia in corso.fasce.all():
                 if studente.is_fascia_taken(fascia):
-                    return {'error': 'Non è stato possibile iscriversi al corso poichè alcune fasce erano già occupate.'}
+                    return {'error': 'Non è stato possibile iscriversi al corso poichè alcune fasce erano già occupate.', 'success': False}
             corso.iscritti.add(studente)
             studente.iscrizioni.add(corso)
             corso.save()
             studente.save()
             return {'success': True}
         except:
-            return {'error': 'Questo corso non esiste, è possibile che sia stato rimosso nel frattempo'}
+            return {'error': 'Questo corso non esiste, è possibile che sia stato rimosso nel frattempo', 'success': False}
+
+    def iscrivi_studente_o(studente, corso):
+        try:
+            for fascia in corso.fasce.all():
+                if studente.is_fascia_taken(fascia):
+                    return {'error': 'Non è stato possibile iscriversi al corso poichè alcune fasce erano già occupate.', 'success': False}
+            corso.iscritti.add(studente)
+            studente.iscrizioni.add(corso)
+            corso.save()
+            studente.save()
+            return {'success': True}
+        except:
+            return {'error': 'Questo corso non esiste, è possibile che sia stato rimosso nel frattempo', 'success': False}
 
     def get_corsi(self, request):
         studente = Utente.objects.get(user=request.user)
@@ -89,8 +102,9 @@ class Corso_Delegate:
 
         for o in ospiti_list:
             if (o == creatore) == False:
-                approvazione = Approvazione(corso = c, studente=o, approva=False)
+                approvazione = Approvazione(corso =Corso.objects.get(id=c.id), studente=o, approva=False)
                 approvazione.save()
+
 
         self.iscrivi_studente(creatore.id, c.id)
 

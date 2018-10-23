@@ -16,4 +16,5 @@ urlpatterns = [
     path(r'success/<idcorso>', views.success_view),
     path(r'rimuovi/<idcorso>', views.rimuovi_iscrizione),
     path(r'rimuovicorso/<idcorso>', views.rimuovi_corso),
+    path(r'accetta/<idapprovazione>', views.accetta_corso),
 ]
