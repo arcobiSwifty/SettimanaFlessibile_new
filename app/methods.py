@@ -1,4 +1,4 @@
-from .models import Corso, Utente, Giorno, Fascia, Aula, Approvazione
+from .models import Corso, Utente, Giorno, Fascia, Aula, Approvazione, SottoCorso
 from django.contrib.auth.models import User
 
 
@@ -76,11 +76,14 @@ class Corso_Delegate:
 
         if creatore not in ospiti_list:
             ospiti_list = [creatore] + ospiti_list
-
         for o in ospiti_list:
             c.ospitanti.add(o)
+
+        sottocorso = SottoCorso()
+        sottocorso.save()
         for f in fasce_list:
-            c.fasce.add(f)
+            sottocorso.fasce.add(f)
+        c.corsi.add(sottocorso)
 
         c.save()
 
