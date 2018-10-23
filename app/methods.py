@@ -83,30 +83,53 @@ class Corso_Delegate:
 
         a = Aula.objects.get(nome_aula=aula)
 
-        c = Corso(nome=titolo, descrizione=descrizione, is_progressive=progressivo, aula=a, creatore=creatore, convalidato=False)
-        c.save()
+        if progressivo == False:
+            for fascia in fasce_list:
+                c = Corso(nome=titolo, descrizione=descrizione, is_progressive=progressivo, aula=a, creatore=creatore, convalidato=False)
+                c.save()
+                if creatore not in ospiti_list:
+                    ospiti_list = [creatore] + ospiti_list
+
+                c.fasce.add(fascia)
+                for o in ospiti_list:
+                    c.ospitanti.add(o)
+                c.save()
+
+                creatore.hosted_courses.add(c)
+                creatore.save()
+
+                for o in ospiti_list:
+                    if (o == creatore) == False:
+                        approvazione = Approvazione(corso =Corso.objects.get(id=c.id), studente=o, approva=False)
+                        approvazione.save()
+
+                self.iscrivi_studente(creatore.id, c.id)
+
+        else:
+
+            c = Corso(nome=titolo, descrizione=descrizione, is_progressive=progressivo, aula=a, creatore=creatore, convalidato=False)
+            c.save()
 
 
-        if creatore not in ospiti_list:
-            ospiti_list = [creatore] + ospiti_list
+            if creatore not in ospiti_list:
+                ospiti_list = [creatore] + ospiti_list
 
-        for o in ospiti_list:
-            c.ospitanti.add(o)
-        for f in fasce_list:
-            c.fasce.add(f)
+            for o in ospiti_list:
+                c.ospitanti.add(o)
+            for f in fasce_list:
+                c.fasce.add(f)
 
-        c.save()
+            c.save()
 
-        creatore.hosted_courses.add(c)
-        creatore.save()
+            creatore.hosted_courses.add(c)
+            creatore.save()
 
-        for o in ospiti_list:
-            if (o == creatore) == False:
-                approvazione = Approvazione(corso =Corso.objects.get(id=c.id), studente=o, approva=False)
-                approvazione.save()
+            for o in ospiti_list:
+                if (o == creatore) == False:
+                    approvazione = Approvazione(corso =Corso.objects.get(id=c.id), studente=o, approva=False)
+                    approvazione.save()
 
-
-        self.iscrivi_studente(creatore.id, c.id)
+            self.iscrivi_studente(creatore.id, c.id)
 
         return {'success': True, 'errors': False, 'message': 'Corso creato con successo'}
 

@@ -120,6 +120,8 @@ def accetta_corso(request, idapprovazione):
 	corso = approvazione.corso
 	approvazione.approva = True
 	iscrizione = methods.Corso_Delegate.iscrivi_studente_o(studente, corso)
+	studente.hosted_courses.add(corso)
+	studente.save()
 	approvazione.save()
 	if Approvazione.objects.filter(corso=corso).filter(approva=True).count() == 0:
 		corso.convalidato = True
