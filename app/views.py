@@ -105,4 +105,5 @@ def corsi(request):
 def miei_corsi(request):
 	iscrizioni = methods.Corso_Delegate().get_corsi(request)
 	fasce = Fascia.objects.all()
-	return render(request, 'corsi/miei_corsi.html', {'iscrizioni': iscrizioni, 'fasce': fasce})
+	hosted_courses = Utente.objects.get(user=request.user).hosted_courses.all()
+	return render(request, 'corsi/miei_corsi.html', {'iscrizioni': iscrizioni, 'fasce': fasce, 'hosted_courses': hosted_courses})

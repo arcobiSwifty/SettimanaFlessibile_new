@@ -3,16 +3,28 @@
 {% block content %}
 
   <div class="container">
+    <table>
+      {% for corsi in hosted_courses %}
+      <h1>Corsi tenuti da te:</h1>
+      {{corsi}}<button class="btn btn-danger">Modifica</button>
+      <button class="btn btn-danger">Elimina</button>
+      <br>
+      {% endfor %}
+      <div class="line"></div>
 
     {% for iscrizione in iscrizioni %}
     fascia: {{iscrizione.fascia}}
       {% if iscrizione.empty == False %}
       <p id="{{iscrizione.id}}">titolo {{iscrizione.titolo}}</p>
+      <button class="btn btn-danger">Rimuovi questa iscrizione</button><br>
       {% else %}
-      <p>  questa fascia è vuota</p><br>
+      <p>questa fascia è vuota</p>
+      <button class="btn btn-primary"><a href="/corsi/">Iscriviti a un corso in questa fascia</a></button>
+      <br>
       {% endif %}
 
     {% endfor %}
+  </table>
 
   </div>
 
