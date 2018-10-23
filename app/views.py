@@ -96,21 +96,13 @@ def iscrizione(request, idcorso):
 		return JsonResponse(risposta)
 
 
+#performance optimizations needed
 @login_required(login_url='/login/')
 def rimuovi_iscrizione(request, idcorso):
-	corso = Corso.objects.get(pk=idcorso)
+	corso = Corso.objects.filter(pk=idcorso)
 	if corso.count() > 0:
-		response = methods.Corso_Delegate.disicrivi_studente(request.user, corso)
-		if response == False:
-			return HttpResponse('Il corso non è stato trovato o non è stato possibile disiscrivervi poichè sei nello staff del corso')
+		response = methods.Corso_Delegate.disicrivi_studente(request.user, Corso.objects.get(pk=idcorso))
 	return redirect('/mieicorsi/')
-
-@login_required(login_url='/login/')
-def rimuovi_corso(request, idcorso):
-	utente = Utente.objects.get(user=request.user)
-	corso = Corso.objects.get(pk=idcorso)
-	response = methods.Corso_Delegate.rimuovi_corso(utente, corso)
-	return render(request, 'success.html', {'message': response['message']})
 
 @login_required(login_url='/login/')
 def corsi(request):
