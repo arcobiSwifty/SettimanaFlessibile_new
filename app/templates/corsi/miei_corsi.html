@@ -5,9 +5,9 @@
   <div class="container">
     <table>
       {% for corsi in hosted_courses %}
-      <h1>Corsi tenuti da te:</h1>
+      <h3>(Tenuto da te)</h3>
       {{corsi}}<button class="btn btn-danger">Modifica</button>
-      <button class="btn btn-danger">Elimina</button>
+      <button class="btn btn-danger"><a href="/rimuovicorso/{{corsi.id}}">Elimina</a></button>
       <br>
       {% endfor %}
       <div class="line"></div>

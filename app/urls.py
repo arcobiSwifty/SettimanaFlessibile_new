@@ -15,4 +15,5 @@ urlpatterns = [
     url(r'^logout/$', views.logout_view),
     path(r'success/<idcorso>', views.success_view),
     path(r'rimuovi/<idcorso>', views.rimuovi_iscrizione),
+    path(r'rimuovicorso/<idcorso>', views.rimuovi_corso),
 ]

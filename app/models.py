@@ -97,6 +97,11 @@ class Corso(models.Model):
 
     convalidato = models.BooleanField(default=False)
 
+    def is_creator(self, studente):
+        if studente == self.creatore:
+            return True
+        return False
+
     def __str__(self):
         return self.nome
 
@@ -132,6 +137,12 @@ class Utente(models.Model):
     sezione = models.CharField(max_length=1)
 
     hosted_courses = models.ManyToManyField('Corso')
+
+    def is_hosted_course(self, corso):
+        corsi = self.hosted_courses.filter(pk=corso.id)
+        if corsi.count() == 0:
+            return False
+        return True
 
     def is_fascia_taken(self, fascia_to_check):
         iscrizione = self.iscrizioni.filter(fasce__fascia=fascia_to_check.fascia).filter(fasce__giorno=fascia_to_check.giorno).count()
