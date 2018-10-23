@@ -102,13 +102,20 @@ class Corso_Delegate:
 
     def disicrivi_studente(studente, corso):
         if corso.contains_studente(studente):
-            
-            utente = Utente.objects.get(user=studente)
-            utente.iscrizioni.remove(corso)
-            utente.save()
 
-            corso.iscritti.remove(utente)
-            corso.save()
-            return True
+            utente = Utente.objects.get(user=studente)
+            if utente.is_hosted_course(corso) == False:
+                utente.iscrizioni.remove(corso)
+                utente.save()
+
+                corso.iscritti.remove(utente)
+                corso.save()
+                return True
+        return False
+
+    def rimuovi_corso(studente, corso):
+        if corso.is_creator(studente):
+            corso.delete()
+            return {'success': True, 'error': False, 'message': 'Operazione effettuata con successo'}
         else:
-            return False
+            return {'success': False, 'error': True, 'message': 'Per rimuovere questo corso, contatta il creatore'}
