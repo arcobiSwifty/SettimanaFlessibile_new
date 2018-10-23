@@ -95,6 +95,15 @@ def iscrizione(request, idcorso):
 		risposta = methods.Corso_Delegate().iscrivi_studente(studente.id, idcorso)
 		return JsonResponse(risposta)
 
+
+#performance optimizations needed
+@login_required(login_url='/login/')
+def rimuovi_iscrizione(request, idcorso):
+	corso = Corso.objects.filter(pk=idcorso)
+	if corso.count() > 0:
+		response = methods.Corso_Delegate.disicrivi_studente(request.user, Corso.objects.get(pk=idcorso))
+	return redirect('/mieicorsi/')
+
 @login_required(login_url='/login/')
 def corsi(request):
 	corsi = Corso.objects.all()

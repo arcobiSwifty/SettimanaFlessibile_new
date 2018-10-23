@@ -100,6 +100,12 @@ class Corso(models.Model):
     def __str__(self):
         return self.nome
 
+    def contains_studente(self, studente):
+        std = self.iscritti.filter(user=studente).count()
+        if std < 1:
+            return False
+        return True
+
 class Approvazione(models.Model):
 
     corso = models.ForeignKey('Corso', on_delete=models.CASCADE)

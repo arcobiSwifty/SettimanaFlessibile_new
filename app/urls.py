@@ -13,5 +13,6 @@ urlpatterns = [
     url(r'^newuser/$', views.create_user),
     url(r'^creacorso/$', views.create_corso),
     url(r'^logout/$', views.logout_view),
-    path(r'success/<idcorso>', views.success_view)
+    path(r'success/<idcorso>', views.success_view),
+    path(r'rimuovi/<idcorso>', views.rimuovi_iscrizione),
 ]

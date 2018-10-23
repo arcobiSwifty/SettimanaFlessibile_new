@@ -16,7 +16,7 @@
     fascia: {{iscrizione.fascia}}
       {% if iscrizione.empty == False %}
       <p id="{{iscrizione.id}}">titolo {{iscrizione.titolo}}</p>
-      <button class="btn btn-danger">Rimuovi questa iscrizione</button><br>
+      <button class="btn btn-danger"><a href="/rimuovi/{{iscrizione.id}}">Rimuovi questa iscrizione</a></button><br>
       {% else %}
       <p>questa fascia è vuota</p>
       <button class="btn btn-primary"><a href="/corsi/">Iscriviti a un corso in questa fascia</a></button>

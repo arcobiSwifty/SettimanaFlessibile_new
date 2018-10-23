@@ -95,3 +95,17 @@ class Corso_Delegate:
         self.iscrivi_studente(creatore.id, c.id)
 
         return {'success': True, 'errors': False, 'message': 'Corso creato con successo'}
+
+
+    def disicrivi_studente(studente, corso):
+        if corso.contains_studente(studente):
+            
+            utente = Utente.objects.get(user=studente)
+            utente.iscrizioni.remove(corso)
+            utente.save()
+
+            corso.iscritti.remove(utente)
+            corso.save()
+            return True
+        else:
+            return False
