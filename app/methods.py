@@ -19,20 +19,7 @@ class Corso_Delegate:
             return {'success': True}
         except:
             return {'error': 'Questo corso non esiste, è possibile che sia stato rimosso nel frattempo', 'success': False}
-
-    def iscrivi_studente_o(studente, corso):
-        try:
-            for fascia in corso.fasce.all():
-                if studente.is_fascia_taken(fascia):
-                    return {'error': 'Non è stato possibile iscriversi al corso poichè alcune fasce erano già occupate.', 'success': False}
-            corso.iscritti.add(studente)
-            studente.iscrizioni.add(corso)
-            corso.save()
-            studente.save()
-            return {'success': True}
-        except:
-            return {'error': 'Questo corso non esiste, è possibile che sia stato rimosso nel frattempo', 'success': False}
-
+            
     def get_corsi(self, request):
         studente = Utente.objects.get(user=request.user)
         fasce = Fascia.objects.all()

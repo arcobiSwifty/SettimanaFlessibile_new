@@ -117,14 +117,14 @@ def rimuovi_corso(request, idcorso):
 @login_required(login_url='/login/')
 def accetta_corso(request, idapprovazione):
 	approvazione = Approvazione.objects.get(pk=idapprovazione)
-	studente = Utente.objects.get(user=request.user)
 	corso = approvazione.corso
 	approvazione.approva = True
-	iscrizione = methods.Corso_Delegate.iscrivi_studente_o(studente, corso)
+	studente = Utente.objects.get(user=request.user)
 	studente.hosted_courses.add(corso)
 	studente.save()
+	iscrizione = methods.Corso_Delegate().iscrivi_studente(studente.id, corso.id)
 	approvazione.save()
-	if Approvazione.objects.filter(corso=corso).filter(approva=True).count() == 0:
+	if Approvazione.objects.filter(corso=corso).filter(approva=False).count() == 0:
 		corso.convalidato = True
 		corso.save()
 	if iscrizione['success']:
