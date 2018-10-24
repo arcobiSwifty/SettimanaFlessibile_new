@@ -9,6 +9,7 @@ from .models import Corso, Utente, Giorno, Fascia, Aula, Approvazione
 from .forms import CreaCorso
 from . import methods
 
+#TODO change this to database 
 giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì']
 categorie = ['Sportivo', 'Film', 'Altro']
 
