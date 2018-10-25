@@ -36,29 +36,21 @@
                 <li class="active">
                     <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Giorno</a>
                     <ul class="collapse list-unstyled" id="homeSubmenu">
+                        {% for giorno in giorni %}
                         <li>
-                            <a href="#">Lunedì</a>
+                            <a href="/giorni/{{giorno}}">{{giorno}}</a>
                         </li>
-                        <li>
-                            <a href="#">Martedì</a>
-                        </li>
-                        <li>
-                            <a href="#">Mercoledì</a>
-                        </li>
+                        {% endfor %}
                     </ul>
                 </li>
                 <li>
                     <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Categoria</a>
                     <ul class="collapse list-unstyled" id="pageSubmenu">
+                      {% for categoria in categorie %}
                         <li>
-                            <a href="#">Sportivo</a>
+                            <a href="/categorie/{{categoria}}">{{categoria}}</a>
                         </li>
-                        <li>
-                            <a href="#">Film</a>
-                        </li>
-                        <li>
-                            <a href="#">Torneo</a>
-                        </li>
+                      {% endfor %}
                     </ul>
                 </li>
             </ul>

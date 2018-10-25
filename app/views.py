@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
-from .models import Corso, Utente, Giorno, Fascia, Aula, Approvazione
+from .models import Corso, Utente, Giorno, Fascia, Aula, Approvazione, Categoria
 from .forms import CreaCorso
 from . import methods
 
@@ -55,7 +55,9 @@ def create_corso(request):
 	if request.method == 'GET':
 		form = CreaCorso()
 		fasce = Fascia.objects.all()
-		return render(request, 'corsi/crea_corso.html', {'crea_corso_form': form, 'fasce': fasce})
+		giorni = Giorno.objects.all()
+		categorie = Categoria.objects.all()
+		return render(request, 'corsi/crea_corso.html', {'crea_corso_form': form, 'fasce': fasce, 'giorni': giorni, 'categorie': categorie})
 	elif request.method == 'POST':
 		titolo = request.POST.get("titolo", "")
 		descrizione = request.POST.get("descrizione", "")
@@ -78,18 +80,22 @@ def create_corso(request):
 
 @login_required(login_url='/login/')
 def home(request):
+	giorni = Giorno.objects.all()
+	categorie = Categoria.objects.all()
 	u = Utente.objects.get(user=request.user)
 	approvazioni = Approvazione.objects.filter(studente=u).filter(approva=False)
-	return render(request, 'corsi/home.html', {'giorniDellaSettimana': giorni, 'categorieDisponibili': categorie, 'approvazioni': approvazioni})
+	return render(request, 'corsi/home.html', {'giorniDellaSettimana': giorni, 'categorieDisponibili': categorie, 'approvazioni': approvazioni, 'giorni': giorni, 'categorie': categorie})
 
 @login_required(login_url='/login/')
 def iscrizione(request, idcorso):
 	if request.method == 'GET':
+		giorni = Giorno.objects.all()
+		categorie = Categoria.objects.all()
 		try:
 			corso_iscrizione = Corso.objects.get(pk=int(idcorso))
 		except:
 			return HttpResponseNotFound('<h1>Questo corso non esiste</h1>')
-		return render(request, 'corsi/iscrizione.html', {'corso': corso_iscrizione})
+		return render(request, 'corsi/iscrizione.html', {'corso': corso_iscrizione, 'giorni': giorni, 'categorie': categorie})
 	elif request.method == 'POST':
 		id_corso = request.POST.get("id_corso", "")
 		if (id_corso == id_corso) == False:
@@ -99,7 +105,7 @@ def iscrizione(request, idcorso):
 		return JsonResponse(risposta)
 
 
-#ottimizza
+#ottimizza e migliora la grafica
 @login_required(login_url='/login/')
 def rimuovi_iscrizione(request, idcorso):
 	corso = Corso.objects.filter(pk=idcorso)
@@ -111,10 +117,12 @@ def rimuovi_iscrizione(request, idcorso):
 
 @login_required(login_url='/login/')
 def rimuovi_corso(request, idcorso):
+	giorni = Giorno.objects.all()
+	categorie = Categoria.objects.all()
 	utente = Utente.objects.get(user=request.user)
 	corso = Corso.objects.get(pk=idcorso)
 	response = methods.Corso_Delegate.rimuovi_corso(utente, corso)
-	return render(request, 'success.html', {'message': response['message']})
+	return render(request, 'success.html', {'message': response['message'], 'giorni': giorni, 'categorie': categorie})
 
 
 @login_required(login_url='/login/')
@@ -131,20 +139,37 @@ def accetta_corso(request, idapprovazione):
 		corso.convalidato = True
 		corso.save()
 	if iscrizione['success']:
-		return render(request, 'success.html', {'message': 'Operazione avvenuta con successo'})
+		return render(request, 'success.html', {'message': 'Operazione avvenuta con successo', 'giorni': giorni, 'categorie': categorie})
 	else:
-		return render(request, 'success.html', {'message': 'è avvenuto un errore durante la registrazione'})
+		return render(request, 'success.html', {'message': 'è avvenuto un errore durante la registrazione', 'giorni': giorni, 'categorie': categorie})
 
 
 @login_required(login_url='/login/')
 def corsi(request):
+	giorni = Giorno.objects.all()
+	categorie = Categoria.objects.all()
 	corsi = Corso.objects.filter(convalidato=True)
-	return render(request, 'corsi/corsi.html', {'corsi': corsi})
+	return render(request, 'corsi/corsi.html', {'corsi': corsi, 'giorni': giorni, 'categorie': categorie})
 
 
 @login_required(login_url='/login/')
 def miei_corsi(request):
+	giorni = Giorno.objects.all()
+	categorie = Categoria.objects.all()
 	iscrizioni = methods.Corso_Delegate().get_corsi(request)
 	fasce = Fascia.objects.all()
 	hosted_courses = Utente.objects.get(user=request.user).hosted_courses.all()
-	return render(request, 'corsi/miei_corsi.html', {'iscrizioni': iscrizioni, 'fasce': fasce, 'hosted_courses': hosted_courses})
+	return render(request, 'corsi/miei_corsi.html', {'iscrizioni': iscrizioni, 'fasce': fasce, 'hosted_courses': hosted_courses, 'giorni': giorni, 'categorie': categorie})
+
+@login_required(login_url='/login/')
+def filtra_categorie(request, categoria):
+	giorni = Giorno.objects.all()
+	categorie = Categoria.objects.all()
+	corsi = Corso.objects.filter(categoria=Categoria.objects.get(nome=categoria))
+	return render(request, 'corsi/corsi.html', {'corsi': corsi, 'giorni': giorni, 'categorie': categorie})
+
+def filtra_giorni(request, giorno):
+	giorni = Giorno.objects.all()
+	categorie = Categoria.objects.all()
+	corsi = Corso.objects.filter(fasce__giorno=Giorno.objects.get(giorno_della_settimana=giorno))
+	return render(request, 'corsi/corsi.html', {'corsi': corsi, 'giorni': giorni, 'categorie': categorie})
