@@ -40,9 +40,6 @@ class Corso_Delegate:
 
     def create_corso(self, request, titolo, descrizione, progressivo, fasce, ospiti, aula, classi, categoria):
 
-
-        print(titolo, descrizione, progressivo, fasce, ospiti, aula, classi)
-
         fasce_list = list()
         for fascia in fasce:
             n_giorno = fascia.split(',')[0]
