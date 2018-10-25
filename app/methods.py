@@ -1,4 +1,4 @@
-from .models import Corso, Utente, Giorno, Fascia, Aula, Approvazione
+from .models import Corso, Utente, Giorno, Fascia, Aula, Approvazione, Categoria
 from django.contrib.auth.models import User
 
 
@@ -19,7 +19,7 @@ class Corso_Delegate:
             return {'success': True}
         except:
             return {'error': 'Questo corso non esiste, è possibile che sia stato rimosso nel frattempo', 'success': False}
-            
+
     def get_corsi(self, request):
         studente = Utente.objects.get(user=request.user)
         fasce = Fascia.objects.all()
@@ -34,7 +34,7 @@ class Corso_Delegate:
                 iscrizioni_list.append({'fascia': fascia, 'empty': False, 'titolo': i_c.nome, 'id': i_c.id})
         return iscrizioni_list
 
-    def create_corso(self, request, titolo, descrizione, progressivo, fasce, ospiti, aula, classi):
+    def create_corso(self, request, titolo, descrizione, progressivo, fasce, ospiti, aula, classi, categoria):
 
 
         print(titolo, descrizione, progressivo, fasce, ospiti, aula, classi)
@@ -72,7 +72,7 @@ class Corso_Delegate:
 
         if progressivo == False:
             for fascia in fasce_list:
-                c = Corso(nome=titolo, descrizione=descrizione, is_progressive=progressivo, aula=a, creatore=creatore, convalidato=False)
+                c = Corso(nome=titolo, descrizione=descrizione, is_progressive=progressivo, aula=a, creatore=creatore, convalidato=False, categoria=Categoria.objects.get(nome=categoria))
                 c.save()
                 if creatore not in ospiti_list:
                     ospiti_list = [creatore] + ospiti_list
@@ -94,7 +94,7 @@ class Corso_Delegate:
 
         else:
 
-            c = Corso(nome=titolo, descrizione=descrizione, is_progressive=progressivo, aula=a, creatore=creatore, convalidato=False)
+            c = Corso(nome=titolo, descrizione=descrizione, is_progressive=progressivo, aula=a, creatore=creatore, convalidato=False, categoria=Categoria.objects.get(nome=categoria))
             c.save()
 
 

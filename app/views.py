@@ -9,7 +9,7 @@ from .models import Corso, Utente, Giorno, Fascia, Aula, Approvazione
 from .forms import CreaCorso
 from . import methods
 
-#TODO change this to database 
+#TODO change this to database
 giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì']
 categorie = ['Sportivo', 'Film', 'Altro']
 
@@ -64,13 +64,15 @@ def create_corso(request):
 		ospiti = request.POST.getlist("ospiti[]", "")
 		aula = request.POST.get("aula", "")
 		classi = request.POST.getlist("classi[]", "")
+		categoria = request.POST.get("categoria", "")
+		print('categoria')
 		print(classi)
 		if is_progressive == 'true':
 			is_progressive = True
 		else:
 			is_progressive = False
 
-		risposta = methods.Corso_Delegate().create_corso(request, titolo, descrizione, is_progressive, fasce, ospiti, aula, classi)
+		risposta = methods.Corso_Delegate().create_corso(request, titolo, descrizione, is_progressive, fasce, ospiti, aula, classi, categoria)
 		return JsonResponse(risposta)
 
 

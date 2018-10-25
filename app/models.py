@@ -75,13 +75,19 @@ class Fascia(models.Model):
     def __str__(self):
         return self.giorno.giorno_della_settimana + ', ' + self.fascia
 
+class Categoria(models.Model):
 
+    nome = models.CharField(max_length=150)
+
+    def __str__(self):
+        return self.nome
 
 class Corso(models.Model):
 
     nome = models.CharField(max_length=100)
 
     descrizione = models.TextField(max_length=1500)
+    categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE, null=True, blank=True)
 
     is_progressive = models.BooleanField(default=True)
 

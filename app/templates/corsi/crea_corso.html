@@ -45,6 +45,7 @@ var aula = ""
 var fascia = []
 var studenti_referenti = []
 var classi = []
+var categoria = ""
 
 //page rendering
 $(document).ready(function () {
@@ -53,6 +54,10 @@ $(document).ready(function () {
   $('#id_aula').on('change',function(){
     aula= $("#id_aula option:selected").text();
   });
+  $('#id_categoria').on('change', function() {
+    categoria = $("#id_categoria option:selected").text();
+    console.log(categoria)
+  })
 })
 //messaggi a chiunque abbia strane idee sulla sicurezza del mio codice
 console.log('Whooo, hai scoperto la console del sito! Chi sei, un hacker?')
@@ -141,6 +146,7 @@ function crea_corso(crea_btn) {
       'ospiti[]': ospiti,
       'aula': a,
       'classi[]': classi,
+      'categoria': categoria,
     },
     method: 'POST',
     datatype: 'json',
