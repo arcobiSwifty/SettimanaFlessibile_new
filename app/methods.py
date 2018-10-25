@@ -6,19 +6,23 @@ class Corso_Delegate:
 
 
     def iscrivi_studente(self, studente_id, corso_id):
-        try:
-            corso = Corso.objects.get(pk=corso_id)
-            studente = Utente.objects.get(pk=studente_id)
-            for fascia in corso.fasce.all():
-                if studente.is_fascia_taken(fascia):
-                    return {'error': 'Non è stato possibile iscriversi al corso poichè alcune fasce erano già occupate.', 'success': False}
-            corso.iscritti.add(studente)
-            studente.iscrizioni.add(corso)
+        corso = Corso.objects.get(pk=corso_id)
+        if corso.full == True:
+            return {'error': 'Il corso selezionato è pieno', 'success': False}
+        if corso.iscritti.count() >= corso.aula.capacita:
+            return {'error': 'Il corso è pieno...', 'success': False}
+        studente = Utente.objects.get(pk=studente_id)
+        for fascia in corso.fasce.all():
+            if studente.is_fascia_taken(fascia):
+                return {'error': 'Non è stato possibile iscriversi al corso poichè alcune fasce erano già occupate.', 'success': False}
+        corso.iscritti.add(studente)
+        studente.iscrizioni.add(corso)
+        corso.save()
+        studente.save()
+        if corso.iscritti.count >= corso.aula.capacita:
+            corso.full = True
             corso.save()
-            studente.save()
-            return {'success': True}
-        except:
-            return {'error': 'Questo corso non esiste, è possibile che sia stato rimosso nel frattempo', 'success': False}
+        return {'success': True}
 
     def get_corsi(self, request):
         studente = Utente.objects.get(user=request.user)
@@ -64,9 +68,12 @@ class Corso_Delegate:
                     return {'error': "Lo studente {0} non può ospitare questo corso perchè durante la fascia: \"{1}\" è ospite di un altro corso".format(o_str, fascia)}
             ospiti_list.append(u_obj)
 
+        aula_magna = Aula.objects.get(capacita=100)
         for fascia in fasce_list:
             if creatore.is_fascia_taken(fascia) == True:
                 return {'error': "Lo studente {0} non può ospitare questo corso perchè durante la fascia: \"{1}\" è ospite di un altro corso".format(creatore, fascia)}
+            if Corso.objects.filter(aula=aula_magna).filter(fascia=fascia).count() > 0:
+                return  {'error': "durante la fascia: \"{1}\" l'aula magna è già occupata".format(fascia)}
 
         a = Aula.objects.get(nome_aula=aula)
 

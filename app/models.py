@@ -5,6 +5,7 @@ from django.core.validators import MaxValueValidator, MinValueValidator
 
 import json
 
+"""
 class JSONField(models.TextField):
 
     def to_python(self, value):
@@ -27,6 +28,7 @@ class JSONField(models.TextField):
         if isinstance(value, dict):
             value = json.dumps(value, cls=DjangoJSONEncoder)
         return value
+"""
 
 class Aula(models.Model):
     nome_aula = models.CharField(
@@ -100,6 +102,8 @@ class Corso(models.Model):
     ospitanti = models.ManyToManyField('Utente')
 
     iscritti = models.ManyToManyField('Utente', related_name='iscritti')
+
+    full = models.BooleanField(default=False)
 
     convalidato = models.BooleanField(default=False)
 
