@@ -6,8 +6,8 @@ class CreaCorso(forms.ModelForm):
     class Meta:
         model = Corso
         fields = ('nome', 'is_progressive', 'descrizione', 'aula', 'categoria')
-
         widgets = {
+            'nome': forms.TextInput(attrs={'placeholder': 'inserisci il titolo'}),
             'descrizione': forms.Textarea(attrs={'class': 'form-control', 'rows': '3', 'placeholder': 'descrivi il tuo corso'}),
         }
 

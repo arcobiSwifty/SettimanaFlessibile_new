@@ -42,8 +42,8 @@ class Corso_Delegate:
 
         if (len(classi) > 5) or (len(ospiti) > 5):
             return {'success': False, 'errors': True, 'error': "Vi è un massimo di 5 studenti referenti per corso."}
-        if (len(ospiti) == len(classi) == False):
-            return {'success': False, 'errors': True, 'error': "I parametri forniti sono invalidi"}
+        if ((len(ospiti) == len(classi)) == False):
+            return {'success': False, 'errors': True, 'error': "I parametri forniti sono invalidi (ricordati di inserire anche te stesso tra gli studenti ospitanti)"}
 
         for classe in classi:
             if len(classe) != 2:
