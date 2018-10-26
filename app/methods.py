@@ -40,6 +40,12 @@ class Corso_Delegate:
 
     def create_corso(self, request, titolo, descrizione, progressivo, fasce, ospiti, aula, classi, categoria):
 
+        if (len(classi) > 5) or (len(ospiti > 5)):
+            return {'success': False, 'errors': True, 'error': "Vi è un massimo di 5 studenti referenti per corso."}
+        if (len(ospiti) == len(classi) == False):
+            return {'success': False, 'errors': True, 'error': "I parametri forniti sono invalidi"}
+
+
         fasce_list = list()
         for fascia in fasce:
             n_giorno = fascia.split(',')[0]
