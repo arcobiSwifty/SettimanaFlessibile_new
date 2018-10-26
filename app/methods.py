@@ -45,6 +45,9 @@ class Corso_Delegate:
         if (len(ospiti) == len(classi) == False):
             return {'success': False, 'errors': True, 'error': "I parametri forniti sono invalidi"}
 
+        for classe in classi:
+            if len(classe) != 2:
+                return {'success': False, 'errors': True, 'error': "La classe 'classe' non esiste."}
 
         fasce_list = list()
         for fascia in fasce:
