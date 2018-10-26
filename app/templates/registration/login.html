@@ -26,11 +26,13 @@
         <center><div id="errorfield"></div></center>
         <center>Login</center>
         <center>
-        <form method="POST">
-          <input type="text" placeholder="nome" id="usernamefield"><br>
-          <input type="password" placeholder="password" id="passwordfield">
-        </form>
-        <button id="submit" onclick="submit()">Login</button>
+          <form method="POST">
+              {% csrf_token %}
+              <input type="text" placeholder="nome" id="usernamefield"><br>
+              <input type="password" placeholder="password" id="passwordfield"><br><br>
+              <button id="submit" onclick="submit_login()" class="btn btn-primary" type="button">Login</button>
+            </form>
+        <!--<button id="submit" onclick="submit()">Login</button>-->
       </center>
       </div>
 
@@ -80,7 +82,7 @@ function getCookie(name) {var cookieValue = null;if (document.cookie && document
          cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));break;}}}return cookieValue;}
  var csrftoken = getCookie('csrftoken');function csrfSafeMethod(method) {return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));}
 
-function submit() {
+function submit_login() {
 
      var username = $('#usernamefield').val();
      var password = $('#passwordfield').val();
@@ -101,7 +103,8 @@ function submit() {
        datatype: 'json',
        success: function(data) {
        if (data['success']) {
-         window.location.replace("/home/");
+         var url = "/home/";
+         window.open(url,"_self");
        }
        else {
          $('#errorfield').html(data['error'])
