@@ -40,7 +40,7 @@ class Corso_Delegate:
 
     def create_corso(self, request, titolo, descrizione, progressivo, fasce, ospiti, aula, classi, categoria):
 
-        if (len(classi) > 5) or (len(ospiti > 5)):
+        if (len(classi) > 5) or (len(ospiti) > 5):
             return {'success': False, 'errors': True, 'error': "Vi è un massimo di 5 studenti referenti per corso."}
         if (len(ospiti) == len(classi) == False):
             return {'success': False, 'errors': True, 'error': "I parametri forniti sono invalidi"}
@@ -63,7 +63,7 @@ class Corso_Delegate:
             c_str = classi[counter].lower()
             u = Utente.objects.filter(nome=o_str, classe=c_str[0], sezione=c_str[1])
             if u.count() == 0:
-                return {'success': False, 'errors': True, 'error': "Lo studente {0} non esiste o non appartiene alla classe {1}".format(o_str, c_str)}
+                return {'success': False, 'errors': True, 'error': "Lo studente {0} non esiste o non appartiene alla classe {1}.".format(o_str, c_str)}
             u_obj = Utente.objects.get(nome=o_str, classe=c_str[0], sezione=c_str[1])
             for fascia in fasce_list:
                 if u_obj.is_fascia_taken(fascia) == True:

@@ -49,6 +49,7 @@ var categoria = ""
 
 //page rendering
 $(document).ready(function () {
+  console.log(aula= $("#id_aula option:selected").text());
   $('#creacorso').toggleClass('active')
   $('#homelink').toggleClass('active')
   $('#id_aula').on('change',function(){
@@ -92,6 +93,14 @@ function validate_studente(n, c) {
 function aggiungi_studente() {
   nome_cognome = $('#ospitanti').val();
   classe = $('#classedellospitante').val();
+  if (nome_cognome == "") {
+    $('#error').html('specifica il nome e il cognome')
+    return
+  }
+  if (classe == ""){
+    $('#error').html('specifica la classe dello studente')
+    return
+  }
   if (validate_studente(nome_cognome, classe) == true) {
     var button = '<button class="btn btn-primary"onclick="rimuovi_studente(this)">Rimuovi</button>';
     var text = `<div class="studenti"><span>${nome_cognome}</span>, <span>${classe}</span>. ${button}</div<br>`;
@@ -108,8 +117,36 @@ function rimuovi_studente(studente) {
   console.log(classi)
 }
 
-function validate_data() {
-  //temporary, waiting implementation
+function validate_data(titolo, descrizione, p, a, fasce, ospiti, classi) {
+  if (titolo == "" || titolo == " ") {
+    $('#error').html('Per favore specifica un titolo')
+    return false}
+  if (descrizione == "" || descrizione == " ") {
+    $('#error').html('Per favore specifica una descrizione')
+    return false}
+  if (a == "" || a == " " || a == "---------") {
+    $('#error').html("Per favore specifica un'aula")
+    return false
+  }
+  if (categoria == "---------" || categoria == "" || categoria == " ") {
+    $('#error').html("Per favore specifica almeno una categoria")
+    return false
+  }
+  if (ospiti.length != classi.length) {
+    $('#error').html('Per favore immetti i nomi di tutti gli studenti con le relative classi')
+    return false
+  }
+  for (var counter in classi) {
+    if (classi[counter].length != 2) {
+      $('#error').html('ricordati di specificare tutte le classi, nel formato: classe sezione. esempio: 3b, 5c, 1f')
+      return false
+    }
+  }
+  if (fasce.length == 0) {
+    $('#error').html('ricordati di specificare almeno una fascia')
+    return false
+  }
+
   return true
 }
 
@@ -123,9 +160,7 @@ function crea_corso(crea_btn) {
   var fasce = fascia;
   var ospiti = studenti_referenti;
 
-  console.log(classi)
-
-  if (validate_data() == false) {
+  if (validate_data(titolo, descrizione, progressivo, a, fasce, ospiti, classi) == false) {
     crea_btn.innerHTML = 'crea';
     return;
   }
@@ -154,6 +189,7 @@ function crea_corso(crea_btn) {
       if (r_d['success']) {
         window.location.replace("/");crea_btn.innerHTML = 'crea';}
       else {
+        crea_btn.innerHTML = 'crea';
         $('#error').html(r_d['error'])
       }
     }
