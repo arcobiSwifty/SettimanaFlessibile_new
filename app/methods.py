@@ -19,7 +19,7 @@ class Corso_Delegate:
         studente.iscrizioni.add(corso)
         corso.save()
         studente.save()
-        if corso.iscritti.count >= corso.aula.capacita:
+        if corso.iscritti.count() >= corso.aula.capacita:
             corso.full = True
             corso.save()
         return {'success': True}
@@ -51,7 +51,6 @@ class Corso_Delegate:
         cr_obj = request.user
         creatore = Utente.objects.get(user=cr_obj)
 
-
         ospiti_list = list()
         for counter, ospite in enumerate(ospiti):
             o_str = ''.join(ospite.split()).lower()
@@ -69,8 +68,8 @@ class Corso_Delegate:
         for fascia in fasce_list:
             if creatore.is_fascia_taken(fascia) == True:
                 return {'error': "Lo studente {0} non può ospitare questo corso perchè durante la fascia: \"{1}\" è ospite di un altro corso".format(creatore, fascia)}
-            if Corso.objects.filter(aula=aula_magna).filter(fascia=fascia).count() > 0:
-                return  {'error': "durante la fascia: \"{1}\" l'aula magna è già occupata".format(fascia)}
+            if Corso.objects.filter(aula=aula_magna).filter(fasce__giorno=fascia.giorno, fasce__fascia=fascia.fascia).count() > 0:
+                return  {'error': "durante la fascia: \"{0}\" l'aula magna è già occupata".format(fascia)}
 
         a = Aula.objects.get(nome_aula=aula)
 
@@ -80,6 +79,9 @@ class Corso_Delegate:
                 c.save()
                 if creatore not in ospiti_list:
                     ospiti_list = [creatore] + ospiti_list
+
+                if len(ospiti_list) == 1:
+                    c.convalidato = True
 
                 c.fasce.add(fascia)
                 for o in ospiti_list:
@@ -101,9 +103,11 @@ class Corso_Delegate:
             c = Corso(nome=titolo, descrizione=descrizione, is_progressive=progressivo, aula=a, creatore=creatore, convalidato=False, categoria=Categoria.objects.get(nome=categoria))
             c.save()
 
-
             if creatore not in ospiti_list:
                 ospiti_list = [creatore] + ospiti_list
+
+            if len(ospiti_list) == 1:
+                c.convalidato = True
 
             for o in ospiti_list:
                 c.ospitanti.add(o)
@@ -127,6 +131,9 @@ class Corso_Delegate:
 
     def disicrivi_studente(studente, corso):
         if corso.contains_studente(studente):
+
+            if corso.full:
+                corso.full = False
 
             utente = Utente.objects.get(user=studente)
             if utente.is_hosted_course(corso) == False:
