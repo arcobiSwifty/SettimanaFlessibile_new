@@ -15,13 +15,14 @@ $(document).ready(function () {
 });
 </script>
 
-Comunicazioni:
-lol<br>
+Ciao! Iscriviti o crea un corso
+<br>
 
 Approvazioni: <br>
 {% for approvazione in approvazioni %}
   {{approvazione}}
   <button class="btn btn-primary"><a href="accetta/{{approvazione.id}}">Accetta</a></button><br>
+  <div class="line"></div>
 {% endfor %}
 
 {% endblock %}

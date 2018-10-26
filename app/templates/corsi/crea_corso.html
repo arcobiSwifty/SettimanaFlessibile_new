@@ -4,17 +4,21 @@
 
 <div class="container">
 
-  <h1>crea un corso</h1>
-  <p>(Nota) rifai la grafica</p>
+  <h1>Crea un corso</h1>
+  <p><bold>Come creare un corso</bold>:<br> Specifica titolo, descrizione, categoria e aula del corso, oltre al tipo di corso (progressivo o no).<br>
+    Specifica poi gli utenti (mettendo il loro nome utente e la loro classe) che ospiteranno il corso. (in caso sei da solo devi mettere il tuo nome, altrimenti è facoltativo)</p>
 
   <div class="line"></div>
 
-  <div id="error" class="alert alert-danger"></div>
+  <div id="error"></div>
 
-  <div class="myform">
+  <div class="myform form-group">
     <!-- implelement creatore server side
     <div class="creator"><p>Creatore</p></div>-->
-
+    <small id="passwordHelpBlock" class="form-text text-muted">
+      Non sono ammessi caratteri speciali come emoji nei titoli dei corsi o nelle descrizioni
+    </small>
+    <br>
     {{ crea_corso_form.as_p }}
 
     {% for fascia in fasce %}
@@ -24,12 +28,16 @@
     <div class="line"></div>
 
     <div class="aggiungiospitantiform">
-      <p>Nota: inserisci nome, cognome e classe (es: Mario Rossi 1a) degli studenti che terranno il corso</p>
+      <!--<p>Nota: inserisci nome, cognome e classe (es: Mario Rossi 1a) degli studenti che terranno il corso</p>-->
       <div class="ospitanti"></div>
-
-      nome e cognome: <input type="text" id="ospitanti" placeholder="aggiungi studente ospitante...">
-      classe: <input type="text" id="classedellospitante" placeholder="">
-      <button id="aggiungiospitante" onclick="aggiungi_studente()">Aggiungi</button>
+      <div class="container">
+        nome: <input type="text" id="ospitanti" placeholder="nome cognome"><br>
+        classe: <input type="text" id="classedellospitante" placeholder="classe"><br><br>
+        <button id="aggiungiospitante" onclick="aggiungi_studente()" class="btn btn-info">Aggiungi</button>
+        <small id="passwordHelpBlock" class="form-text text-muted">
+          inserisci nome, cognome e classe (es: mariorossi 1a) degli studenti che terranno il corso.
+        </small>
+      </div>
     </div>
 
     <div class="line"></div>
@@ -49,7 +57,7 @@ var categoria = ""
 
 //page rendering
 $(document).ready(function () {
-  console.log(aula= $("#id_aula option:selected").text());
+  //$('#id_is_progressive').addClass('form-check-input')
   $('#creacorso').toggleClass('active')
   $('#homelink').toggleClass('active')
   $('#id_aula').on('change',function(){
@@ -161,6 +169,8 @@ function crea_corso(crea_btn) {
   var ospiti = studenti_referenti;
 
   if (validate_data(titolo, descrizione, progressivo, a, fasce, ospiti, classi) == false) {
+    $('#error').addClass('alert')
+    $('#error').addClass('alert-danger')
     crea_btn.innerHTML = 'crea';
     return;
   }
@@ -189,6 +199,8 @@ function crea_corso(crea_btn) {
       if (r_d['success']) {
         window.location.replace("/");crea_btn.innerHTML = 'crea';}
       else {
+        $('#error').addClass('alert')
+        $('#error').addClass('alert-danger')
         crea_btn.innerHTML = 'crea';
         $('#error').html(r_d['error'])
       }
