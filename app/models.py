@@ -3,34 +3,9 @@ from django.contrib.auth.models import User
 from django.core.serializers.json import DjangoJSONEncoder
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-import json
-
-"""
-class JSONField(models.TextField):
-
-    def to_python(self, value):
-        if value == "":
-            return None
-
-        try:
-            if isinstance(value, str):
-                return json.loads(value)
-        except ValueError:
-            pass
-        return value
-
-    def from_db_value(self, value, *args):
-        return self.to_python(value)
-
-    def get_db_prep_save(self, value, *args, **kwargs):
-        if value == "":
-            return None
-        if isinstance(value, dict):
-            value = json.dumps(value, cls=DjangoJSONEncoder)
-        return value
-"""
 
 class Aula(models.Model):
+
     nome_aula = models.CharField(
         max_length=100,
         choices=([
@@ -46,6 +21,7 @@ class Aula(models.Model):
         return self.nome_aula
 
 class Giorno(models.Model):
+
     giorno_della_settimana = models.CharField(
         max_length=80,
         choices=([
@@ -63,6 +39,7 @@ class Giorno(models.Model):
 
 
 class Fascia(models.Model):
+
     giorno = models.ForeignKey('Giorno', on_delete=models.CASCADE)
     fascia = models.CharField(
         max_length=80,
@@ -87,22 +64,18 @@ class Categoria(models.Model):
 class Corso(models.Model):
 
     nome = models.CharField(max_length=100)
-
     descrizione = models.TextField(max_length=1500)
     categoria = models.ForeignKey('Categoria', on_delete=models.CASCADE, null=True, blank=True)
 
     is_progressive = models.BooleanField(default=True)
-
     fasce = models.ManyToManyField('Fascia')
 
     aula = models.ForeignKey('Aula', on_delete=models.CASCADE, related_name='aula')
 
     creatore = models.ForeignKey('Utente', on_delete=models.CASCADE, related_name='creatore')
-
     ospitanti = models.ManyToManyField('Utente')
 
     iscritti = models.ManyToManyField('Utente', related_name='iscritti')
-
     full = models.BooleanField(default=False)
 
     convalidato = models.BooleanField(default=False)
@@ -124,7 +97,6 @@ class Corso(models.Model):
 class Approvazione(models.Model):
 
     corso = models.ForeignKey('Corso', on_delete=models.CASCADE)
-
     studente = models.ForeignKey('Utente', on_delete=models.CASCADE)
 
     approva = models.BooleanField(default=False)
@@ -138,14 +110,10 @@ class Utente(models.Model):
 
     nome = models.CharField(max_length=150)
     user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-
-
-    #should be corsi a cui è iscritto id
-    iscrizioni = models.ManyToManyField('Corso', related_name='iscrizioni')
-
     classe = models.IntegerField(default=1,validators=[MaxValueValidator(5), MinValueValidator(1)])
     sezione = models.CharField(max_length=1)
 
+    iscrizioni = models.ManyToManyField('Corso', related_name='iscrizioni')
     hosted_courses = models.ManyToManyField('Corso')
 
     def is_hosted_course(self, corso):
