@@ -5,24 +5,23 @@
   <div class="container">
     <table>
       {% for corsi in hosted_courses %}
-      <h3>(Tenuto da te)</h3>
-      {{corsi}}<button class="btn btn-danger">Modifica</button>
+        <h3>(Tenuto da te)</h3>
+        {{corsi}}
+        <button class="btn btn-danger">Vedi dettagli</button>
       <button class="btn btn-danger"><a href="/rimuovicorso/{{corsi.id}}">Elimina</a></button>
       <br>
       {% endfor %}
       <div class="line"></div>
 
     {% for iscrizione in iscrizioni %}
-    fascia: {{iscrizione.fascia}}
-      {% if iscrizione.empty == False %}
-      <p id="{{iscrizione.id}}">titolo {{iscrizione.titolo}}</p>
-      <button class="btn btn-danger"><a href="/rimuovi/{{iscrizione.id}}">Rimuovi questa iscrizione</a></button><br>
-      {% else %}
-      <p>questa fascia è vuota</p>
-      <button class="btn btn-primary"><a href="/corsi/">Iscriviti a un corso in questa fascia</a></button>
-      <br>
+      fascia: {{iscrizione.fascia}}
+        {% if iscrizione.empty == False %}
+          <p id="{{iscrizione.id}}">titolo {{iscrizione.titolo}}</p>
+          <button class="btn btn-danger"><a href="/rimuovi/{{iscrizione.id}}">Rimuovi questa iscrizione</a></button><br>
+        {% else %}
+          <p>questa fascia è vuota</p>
+          <button class="btn btn-primary"><a href="/corsi/">Iscriviti a un corso in questa fascia</a></button><br>
       {% endif %}
-
     {% endfor %}
   </table>
 
@@ -32,7 +31,6 @@
   $(document).ready(function () {
       $('#mieicorsi').toggleClass('active');
       $('#homelink').toggleClass('active');
-
   });
   </script>
 
