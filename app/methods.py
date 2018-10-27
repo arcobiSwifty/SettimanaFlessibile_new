@@ -88,51 +88,39 @@ class Corso_Delegate:
                 c.save()
                 if creatore not in ospiti_list:
                     ospiti_list = [creatore] + ospiti_list
-
                 if len(ospiti_list) == 1:
                     c.convalidato = True
-
                 c.fasce.add(fascia)
                 for o in ospiti_list:
                     c.ospitanti.add(o)
                 c.save()
-
                 creatore.hosted_courses.add(c)
                 creatore.save()
-
                 for o in ospiti_list:
                     if (o == creatore) == False:
                         approvazione = Approvazione(corso =Corso.objects.get(id=c.id), studente=o, approva=False)
                         approvazione.save()
-
                 self.iscrivi_studente(creatore.id, c.id)
 
         else:
 
             c = Corso(nome=titolo, descrizione=descrizione, is_progressive=progressivo, aula=a, creatore=creatore, convalidato=False, categoria=Categoria.objects.get(nome=categoria))
             c.save()
-
             if creatore not in ospiti_list:
                 ospiti_list = [creatore] + ospiti_list
-
             if len(ospiti_list) == 1:
                 c.convalidato = True
-
             for o in ospiti_list:
                 c.ospitanti.add(o)
             for f in fasce_list:
                 c.fasce.add(f)
-
             c.save()
-
             creatore.hosted_courses.add(c)
             creatore.save()
-
             for o in ospiti_list:
                 if (o == creatore) == False:
                     approvazione = Approvazione(corso =Corso.objects.get(id=c.id), studente=o, approva=False)
                     approvazione.save()
-
             self.iscrivi_studente(creatore.id, c.id)
 
         return {'success': True, 'errors': False, 'message': 'Corso creato con successo'}
@@ -140,15 +128,12 @@ class Corso_Delegate:
 
     def disicrivi_studente(studente, corso):
         if corso.contains_studente(studente):
-
             if corso.full:
                 corso.full = False
-
             utente = Utente.objects.get(user=studente)
             if utente.is_hosted_course(corso) == False:
                 utente.iscrizioni.remove(corso)
                 utente.save()
-
                 corso.iscritti.remove(utente)
                 corso.save()
                 return True
