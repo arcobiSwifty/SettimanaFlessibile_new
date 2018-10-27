@@ -18,7 +18,11 @@
     <div class="pure-u-md-1-2 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-5 centered-text"><p>titolo: {{ corso.nome }}</p></div>
     <div class="pure-u-md-1-2 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-5 centered-text"><p>categoria: {{corso.categoria}}</p></div>
     <div class="pure-u-md-1-3 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-3 pure-u-xl-1-5 centered-text"><p>aula: {{corso.aula.nome_aula}}</p></div>
-    <div class="pure-u-md-1-3 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-3 pure-u-xl-1-5 centered-text"><p>progressivo: {{corso.is_progressive}}</p></div>
+    {% if corso.progressivo == True %}
+      <div class="pure-u-md-1-3 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-3 pure-u-xl-1-5 centered-text"><p>progressivo</p></div>
+    {% else %}
+      <div class="pure-u-md-1-3 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-3 pure-u-xl-1-5 centered-text"><p>singolo</p></div>
+    {% endif %}
     <div class="pure-u-md-1-3 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-3 pure-u-xl-1-5 centered-text"><p>
       <button class="btn btn-primary"><a href='/iscriviti/{{corso.id}}'>Iscriviti</a></button>
       <button class="btn btn-primary">Vedi dettagli</button>

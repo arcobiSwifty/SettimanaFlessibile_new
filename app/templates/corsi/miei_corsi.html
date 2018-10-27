@@ -4,25 +4,39 @@
 
   <div class="container">
     <table>
+      <tr>
+      {% if hosted_courses|length > 0 %}
+        <h3>Corsi tenuti da te</h3><br>
+      {% endif %}
       {% for corsi in hosted_courses %}
-        <h3>(Tenuto da te)</h3>
-        {{corsi}}
-        <button class="btn btn-danger">Vedi dettagli</button>
-      <button class="btn btn-danger"><a href="/rimuovicorso/{{corsi.id}}">Elimina</a></button>
-      <br>
+        {{corsi}}<br>
+        <button class="btn btn-info"><a href="/dettagli/{{iscrizione.id}}">Vedi dettagli</a></button>
+        <button class="btn btn-danger"><a href="/rimuovicorso/{{corsi.id}}">Elimina</a></button>
+        <br><br>
       {% endfor %}
       <div class="line"></div>
+      </tr>
+      <tr>
+        {% if iscrizioni|length > 0 %}
+          <h3>Le tue iscrizioni</h3>
+        {% endif %}
+      </tr>
+      <tr>
+        {% for iscrizione in iscrizioni %}
+          <br>
+          fascia: {{iscrizione.fascia}}
+          {% if iscrizione.empty == False %}
+            <h6 id="{{iscrizione.id}}">Titolo: {{iscrizione.titolo}}</h6>
+            <button type="button" name="button" class="btn btn-info"><a href="/dettagli/{{iscrizione.id}}">Vedi dettagli</a></button>
+            <button class="btn btn-danger"><a href="/rimuovi/{{iscrizione.id}}">Rimuovi questa iscrizione</a></button>
+            <br>
+          {% else %}
+            <p>questa fascia è vuota</p>
+            <button class="btn btn-primary"><a href="/corsi/">Iscriviti a un corso</a></button><br>
+          {% endif %}
+        {% endfor %}
+    </tr>
 
-    {% for iscrizione in iscrizioni %}
-      fascia: {{iscrizione.fascia}}
-        {% if iscrizione.empty == False %}
-          <p id="{{iscrizione.id}}">titolo {{iscrizione.titolo}}</p>
-          <button class="btn btn-danger"><a href="/rimuovi/{{iscrizione.id}}">Rimuovi questa iscrizione</a></button><br>
-        {% else %}
-          <p>questa fascia è vuota</p>
-          <button class="btn btn-primary"><a href="/corsi/">Iscriviti a un corso in questa fascia</a></button><br>
-      {% endif %}
-    {% endfor %}
   </table>
 
   </div>

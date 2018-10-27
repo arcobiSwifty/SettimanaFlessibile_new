@@ -8,28 +8,77 @@
 
 <div class="line"></div>
 
-<div id="error"></div>
-
 	<div class="pure-g">
-	    <div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2 centered-text"><p>titolo: {{ corso.nome }}</p></div>
-	    <div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2 centered-text"><p>descrizione: {{corso.descrizione}}</p></div>
-	    <div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2 centered-text"><p>aula: {{corso.aula.nome_aula}}</p></div>
-	    <div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2 centered-text"><p>progressivo: {{corso.is_progressive}}</p></div>
-			<div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2 centered-text"><p>creatore: {{corso.creatore.nome}}, {{corso.creatore.classe}}{{corso.creatore.sezione}}</p></div>
-	    <div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2 centered-text"><p>
-	      <button class="btn btn-primary" onclick="iscrizione({{corso.id}}, this)">Iscriviti</button>
-	    </p></div>
+		<div class="container">
+			<div id="error"></div>
+
+	    <div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2">titolo:<h1> {{ corso.nome }}</h1></div>
+	    <div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2"><p>descrizione: {{corso.descrizione}}</p></div>
+	    <div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2"><p>aula: {{corso.aula.nome_aula}}</p></div>
+			<div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2"><p>Categoria: {{corso.categoria}}</p></div>
+			<div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2"><p>Numero di iscritti: {{iscritti}}/{{corso.aula.capacita}}</p></div>
+			{% if corso.progressivo == True %}
+	    	<div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2"><p>progressivo: si</p></div>
+			{% else %}
+				<div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2"><p>singolo: si</p></div>
+			{% endif %}
+			<div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2"><p>creatore: {{corso.creatore.nome}}, {{corso.creatore.classe}}{{corso.creatore.sezione}}</p></div>
+	    <div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-2 pure-u-xl-1-2">
+			<button type="submit" class="btn btn-primary" onclick="iscrizione({{corso.id}}, this)">Iscriviti</button></div><br>
+
+			<div class="pure-u-md-1-1 pure-u-sm-1-1 pure-u-1-1 pure-u-lg-1-1 pure-u-xl-1-1">Fasce:
+				<div id="fasce">
+					{% for fascia in fasce %}
+						{{fascia}}|
+					{% endfor %}
+				</div>
+				</div>
+			</div><br>
 
 	    <div class="line"></div>
 	<script type="text/javascript">
+		$(document).ready(function () {
+		    var fasce = $('#fasce').html();
+				var f_split = fasce.split("|");
+				for (var f_counter in f_split) {
+					f_split[f_counter] = f_split[f_counter].trim()
+				}
+				console.log(f_split)
+				var response = "<table class='table'><thead><tr><th>#</th><th>Lunedì</th><th>Martedì</th><th>Mercoledì</th><th>Giovedì</th><th>Venerdì</th></tr></thead>";
+				var all_giorni = ["Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì"];
+				var all_fasce = ["Prima Fascia", "Seconda Fascia", "Terza Fascia"];
+
+				var table = {};
+				for (g in all_giorni) {var fs = [];for (f in all_fasce) {fs.push(all_fasce[f]);}table[all_giorni[g]] = fs;}
+				var table_formatted = [];
+				for (var t in table) {for (var tr in table[t]) {table_formatted.push(t + ", " + table[t][tr]);}}
+
+				for (var counter in table_formatted) {
+					if (counter % 5 == 0) {
+						response = response + '<tr><td>' + all_fasce[counter/5] + '</td>'
+					}
+					if (f_split.includes(table_formatted[counter])) {
+						response += '<td class="centered-text">' + 'si' +'</td>'
+					} else {
+						response += '<td class="centered-text">' + 'no' +'</td>'
+					}
+					if (counter % 5 == 4) {
+						response = response + '</tr>'
+					}
+				}
+				$('#fasce').replaceWith(response + "</table>")
+		});
+
 	function getCookie(name) {var cookieValue = null;if (document.cookie && document.cookie != '') {var cookies = document.cookie.split(';');
 	       for (var i = 0; i < cookies.length; i++) {var cookie = jQuery.trim(cookies[i]);if (cookie.substring(0, name.length + 1) == (name + '=')) {
 	         cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));break;}}}return cookieValue;}
 	 var csrftoken = getCookie('csrftoken');function csrfSafeMethod(method) {return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));}
 
 		function iscrizione(id_corso, btn) {
+
 			var csrftoken = getCookie('csrftoken');
 			$.ajax({
+
 				beforeSend: function(xhr, settings) {
 					if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
 						xhr.setRequestHeader("X-CSRFToken", csrftoken);
@@ -46,13 +95,13 @@
 						btn.innerHTML = 'iscrizione effettuata'
 						window.location.replace("/success/"+id_corso);;}
 					else {
+						$('#error').addClass('alert')
+						$('#error').addClass('alert-danger')
 						$('#error').html(r_d['error']);
 						btn.innerHTML = 'Iscriviti';
 					}
 				}
 		});
-
-
 		}
 	</script>
 {% endblock %}

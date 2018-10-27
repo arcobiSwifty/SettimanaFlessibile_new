@@ -15,7 +15,7 @@ categorie = ['Sportivo', 'Film', 'Altro']
 
 
 @login_required(login_url='/login/')
-def success_view(request, id_corso):
+def success_view(request, idcorso):
 	return HttpResponse('Iscrizione effettuata (rifai la grafica di questa pagina)')
 
 def login_page(request):
@@ -67,8 +67,6 @@ def create_corso(request):
 		aula = request.POST.get("aula", "")
 		classi = request.POST.getlist("classi[]", "")
 		categoria = request.POST.get("categoria", "")
-		print('categoria')
-		print(classi)
 		if is_progressive == 'true':
 			is_progressive = True
 		else:
@@ -76,6 +74,10 @@ def create_corso(request):
 
 		risposta = methods.Corso_Delegate().create_corso(request, titolo, descrizione, is_progressive, fasce, ospiti, aula, classi, categoria)
 		return JsonResponse(risposta)
+
+@login_required(login_url='/login/')
+def informazioni(request):
+	return render(request, 'corsi/informazioni.html', {})
 
 
 @login_required(login_url='/login/')
@@ -91,11 +93,9 @@ def iscrizione(request, idcorso):
 	if request.method == 'GET':
 		giorni = Giorno.objects.all()
 		categorie = Categoria.objects.all()
-		try:
-			corso_iscrizione = Corso.objects.get(pk=int(idcorso))
-		except:
-			return HttpResponseNotFound('<h1>Questo corso non esiste</h1>')
-		return render(request, 'corsi/iscrizione.html', {'corso': corso_iscrizione, 'giorni': giorni, 'categorie': categorie})
+		corso_iscrizione = Corso.objects.get(pk=int(idcorso))
+		print(corso_iscrizione.iscritti.all())
+		return render(request, 'corsi/iscrizione.html', {'corso': corso_iscrizione, 'giorni': giorni, 'categorie': categorie, 'fasce': corso_iscrizione.fasce.all(), 'iscritti': corso_iscrizione.iscritti.count()})
 	elif request.method == 'POST':
 		id_corso = request.POST.get("id_corso", "")
 		if (id_corso == id_corso) == False:
@@ -148,7 +148,7 @@ def accetta_corso(request, idapprovazione):
 def corsi(request):
 	giorni = Giorno.objects.all()
 	categorie = Categoria.objects.all()
-	corsi = Corso.objects.filter(convalidato=True)
+	corsi = Corso.objects.filter(convalidato=True).filter(full=False)
 	return render(request, 'corsi/corsi.html', {'corsi': corsi, 'giorni': giorni, 'categorie': categorie})
 
 

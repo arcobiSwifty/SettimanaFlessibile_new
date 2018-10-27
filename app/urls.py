@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^home/$', views.home),
     url(r'^login/$', views.login_page),
     path(r'giorni/<giorno>', views.filtra_giorni),
+    path(r'informazioni/', views.informazioni),
     path(r'categorie/<categoria>', views.filtra_categorie),
     url(r'^creacorso/$', views.create_corso),
     url(r'^logout/$', views.logout_view),

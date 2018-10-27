@@ -10,10 +10,16 @@
 
     }
 
+    table {
+    table-layout: fixed;
+  }
+
 /* header file */
+
 .centered-text {
   text-align:center;
 }
+
 
 .header {
 
