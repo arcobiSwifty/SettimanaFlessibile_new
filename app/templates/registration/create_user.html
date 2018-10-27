@@ -28,7 +28,8 @@
           cookieValue =   decodeURIComponent(cookie.substring(name.length + 1));break;}}}return cookieValue;}
 
 
-      var csrftoken = getCookie('csrftoken');function csrfSafeMethod(method) {return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));}
+      var csrftoken = getCookie('csrftoken');
+      function csrfSafeMethod(method) {return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));}
 
       function submit() {
 
