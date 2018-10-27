@@ -14,17 +14,22 @@
         <link rel="stylesheet" href="{% static 'css/style.css' %}">
     		<link rel="stylesheet" href="{% static 'css/sidebar.css' %}">
 
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
         <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
         <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="{% static 'css/login.css' %}">
     <title>Login | Settimana Flessibile</title>
   </head>
   <body>
+    <div class="container">
     <div class="centered" id="loginscreen">
 
-      <div class="center">
+
         <center><div id="errorfield"></div></center>
-        <center>Login</center>
+        <center><h6>Login</h6></center>
         <center>
           <form method="POST">
               {% csrf_token %}
@@ -32,11 +37,10 @@
               <input type="password" placeholder="password" id="passwordfield"><br><br>
               <button id="submit" onclick="submit_login()" class="btn btn-primary" type="button">Login</button>
             </form>
-        <!--<button id="submit" onclick="submit()">Login</button>-->
       </center>
       </div>
+      </div>
 
-    </div>
 
 <!--
 <form>
@@ -85,7 +89,9 @@ function getCookie(name) {var cookieValue = null;if (document.cookie && document
 function submit_login() {
 
      var username = $('#usernamefield').val();
+     username = username.replace(/\s+/g, '').toLowerCase();
      var password = $('#passwordfield').val();
+     password = password.replace(/\s+/g, '').toLowerCase();
 
      var csrftoken = getCookie('csrftoken');
      $.ajax({
@@ -107,6 +113,8 @@ function submit_login() {
          window.open(url,"_self");
        }
        else {
+         $('#errorfield').addClass('alert')
+         $('#errorfield').addClass('alert-danger')
          $('#errorfield').html(data['error'])
        }
        }

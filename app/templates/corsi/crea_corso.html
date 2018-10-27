@@ -9,12 +9,9 @@
     Specifica poi gli utenti (mettendo il loro nome utente e la loro classe) che ospiteranno il corso. (in caso sei da solo devi mettere il tuo nome, altrimenti è facoltativo)</p>
 
   <div class="line"></div>
-
   <div id="error"></div>
 
   <div class="myform form-group">
-    <!-- implelement creatore server side
-    <div class="creator"><p>Creatore</p></div>-->
     <small id="passwordHelpBlock" class="form-text text-muted">
       Non sono ammessi caratteri speciali come emoji nei titoli dei corsi o nelle descrizioni
     </small>
@@ -28,13 +25,12 @@
     <div class="line"></div>
 
     <div class="aggiungiospitantiform">
-      <!--<p>Nota: inserisci nome, cognome e classe (es: Mario Rossi 1a) degli studenti che terranno il corso</p>-->
       <div class="ospitanti"></div>
       <div class="container">
         nome: <input type="text" id="ospitanti" placeholder="nome cognome"><br>
         classe: <input type="text" id="classedellospitante" placeholder="classe"><br><br>
         <button id="aggiungiospitante" onclick="aggiungi_studente()" class="btn btn-info">Aggiungi</button>
-        <small id="passwordHelpBlock" class="form-text text-muted">
+        <small id="ospitiHelpBlock" class="form-text text-muted">
           inserisci nome, cognome e classe (es: mariorossi 1a) degli studenti che terranno il corso.
         </small>
       </div>
@@ -55,9 +51,7 @@ var studenti_referenti = []
 var classi = []
 var categoria = ""
 
-//page rendering
 $(document).ready(function () {
-  //$('#id_is_progressive').addClass('form-check-input')
   $('#creacorso').toggleClass('active')
   $('#homelink').toggleClass('active')
   $('#id_aula').on('change',function(){
@@ -65,15 +59,9 @@ $(document).ready(function () {
   });
   $('#id_categoria').on('change', function() {
     categoria = $("#id_categoria option:selected").text();
-    console.log(categoria)
   })
 })
-//messaggi a chiunque abbia strane idee sulla sicurezza del mio codice
-console.log('Whooo, hai scoperto la console del sito! Chi sei, un hacker?')
-console.log('Nel caso ti stessero venendo strane idee, sappi che il server esegue verifiche server-side contro SQL-injection, brute force e simili.')
-console.log('P.S: if (sei un programmatore && vorresti aiutare a sviluppare la settimana flessibile) {iscriviti al corso: "come è stato fatto questo sito}".')
 
-//fasce
 function toogle_fascia(str) {
   if (fascia.includes(str)) {
     var index = fascia.indexOf(str);
@@ -99,14 +87,16 @@ function validate_studente(n, c) {
   return true
 }
 function aggiungi_studente() {
-  nome_cognome = $('#ospitanti').val();
-  classe = $('#classedellospitante').val();
+  var nome_cognome = $('#ospitanti').val();
+  nome_cognome = nome_cognome.replace(/\s+/g, '').toLowerCase();
+  var classe = $('#classedellospitante').val();
+  classe = classe.replace(/\s+/g, '').toLowerCase();
   if (nome_cognome == "") {
-    $('#error').html('specifica il nome e il cognome')
+    $('#error').html('specifica il nome e il cognome');
     return
   }
   if (classe == ""){
-    $('#error').html('specifica la classe dello studente')
+    $('#error').html('specifica la classe dello studente');
     return
   }
   if (validate_studente(nome_cognome, classe) == true) {
@@ -114,15 +104,13 @@ function aggiungi_studente() {
     var text = `<div class="studenti"><span>${nome_cognome}</span>, <span>${classe}</span>. ${button}</div<br>`;
     $('.ospitanti').append(text);
     studenti_referenti.push(nome_cognome);
-    classi.push(classe)
+    classi.push(classe);
   }
-  console.log(classi)
 }
 function rimuovi_studente(studente) {
   studenti_referenti.splice(studenti_referenti.indexOf(studente.parentNode.firstChild.innerHTML), 1);
   studente.parentNode.parentNode.removeChild(studente.parentNode);
   classi.splice(classi.indexOf(studente.parentNode.children[1].innerHTML), 1);
-  console.log(classi)
 }
 
 function validate_data(titolo, descrizione, p, a, fasce, ospiti, classi) {
