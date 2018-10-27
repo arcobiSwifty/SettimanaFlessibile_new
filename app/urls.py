@@ -10,6 +10,7 @@ urlpatterns = [
     path(r'iscriviti/<idcorso>', views.iscrizione),
     url(r'^home/$', views.home),
     url(r'^login/$', views.login_page),
+    path(r'dettagli/<idcorso>', views.dettagli),
     path(r'giorni/<giorno>', views.filtra_giorni),
     path(r'informazioni/', views.informazioni),
     path(r'categorie/<categoria>', views.filtra_categorie),
@@ -18,6 +19,7 @@ urlpatterns = [
     path(r'success/<idcorso>', views.success_view),
     path(r'rimuovi/<idcorso>', views.rimuovi_iscrizione),
     path(r'rimuovicorso/<idcorso>', views.rimuovi_corso),
+    path(r'appello/<idcorso>', views.appello),
     path(r'accetta/<idapprovazione>', views.accetta_corso),
     url(r'^newuser/$', views.create_user),
 ]

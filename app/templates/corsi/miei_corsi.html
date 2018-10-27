@@ -10,7 +10,7 @@
       {% endif %}
       {% for corsi in hosted_courses %}
         {{corsi}}<br>
-        <button class="btn btn-info"><a href="/dettagli/{{iscrizione.id}}">Vedi dettagli</a></button>
+        <button class="btn btn-info"><a href="/dettagli/{{corsi.id}}">Vedi dettagli</a></button>
         <button class="btn btn-danger"><a href="/rimuovicorso/{{corsi.id}}">Elimina</a></button>
         <br><br>
       {% endfor %}

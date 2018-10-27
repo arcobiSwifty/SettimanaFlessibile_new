@@ -79,6 +79,19 @@ def create_corso(request):
 def informazioni(request):
 	return render(request, 'corsi/informazioni.html', {})
 
+@login_required(login_url='/login/')
+def dettagli(request, idcorso):
+	corso = Corso.objects.get(pk=idcorso)
+	return render(request, 'corsi/dettagli.html', {'corso': corso, 'fasce': corso.fasce.all(), 'studenti': corso.ospitanti.all(), 'iscritti': corso.iscritti.count()})
+
+@login_required(login_url='/login/')
+def appello(request, idcorso):
+	corso = Corso.objects.get(pk=idcorso)
+	studente = Utente.objects.get(user=request.user)
+	if (studente == corso.creatore) == False:
+		return HttpResponse('Solo il creatore del corso può vedere gli appelli')
+	iscritti = corso.iscritti.all()
+	return render(request, 'corsi/appelli.html', {'iscritti': iscritti})
 
 @login_required(login_url='/login/')
 def home(request):
@@ -94,7 +107,6 @@ def iscrizione(request, idcorso):
 		giorni = Giorno.objects.all()
 		categorie = Categoria.objects.all()
 		corso_iscrizione = Corso.objects.get(pk=int(idcorso))
-		print(corso_iscrizione.iscritti.all())
 		return render(request, 'corsi/iscrizione.html', {'corso': corso_iscrizione, 'giorni': giorni, 'categorie': categorie, 'fasce': corso_iscrizione.fasce.all(), 'iscritti': corso_iscrizione.iscritti.count()})
 	elif request.method == 'POST':
 		id_corso = request.POST.get("id_corso", "")

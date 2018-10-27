@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container">
+  <div class="line"></div>
+  Titolo: <h3>{{ corso.nome }}</h3><br>
+  descrizione: {{ corso.descrizione }}<br>
+  categoria: {{ corso.categoria }}<br>
+  {% if corso.convalidato %}
+    stato: convalidato
+  {% else %}
+    stato: non convalidato
+  {% endif %}
+  <br>
+  {% if corso.full %}
+    pieno: si
+  {% else %}
+    pieno: no
+  {% endif %}
+  <br>
+  {% if corso.is_progressive %}
+    tipologia: singolo
+  {% else %}
+    tipologia: progressivo
+  {% endif %}
+  <div class="line"></div>
+  fasce:
+  {% for fascia in fasce %}
+    <p>{{fascia}} </p>
+  {% endfor %}
+  <div class="line"></div>
+  creatore: <p>{{ corso.creatore }}, {{ corso.creatore.classe }}{{ corso.creatore.sezione }}</p>
+  <br>
+  studenti referenti:
+  {% for studente in studenti %}
+    <p>{{studente}}, {{studente.classe}}{{studente.sezione}}</p>
+  {% endfor %}
+  <br>
+  iscritti: {{iscritti}}/{{corso.aula.capacita}}
+  <br>
+  <br>
+  <button class="btn btn-info"><a href="/appello/{{corso.id}}">Appello</a></button>
+
+
+
+
+</div>
+
+
+
+{% endblock %}
