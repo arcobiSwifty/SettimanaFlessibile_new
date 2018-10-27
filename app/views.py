@@ -9,14 +9,19 @@ from .models import Corso, Utente, Giorno, Fascia, Aula, Approvazione, Categoria
 from .forms import CreaCorso
 from . import methods
 
-#TODO change this to database
-giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì']
-categorie = ['Sportivo', 'Film', 'Altro']
-
+@login_required(login_url='/login/')
+def home(request):
+	giorni = Giorno.objects.all()
+	categorie = Categoria.objects.all()
+	u = Utente.objects.get(user=request.user)
+	approvazioni = Approvazione.objects.filter(studente=u).filter(approva=False)
+	return render(request, 'corsi/home.html', {'giorniDellaSettimana': giorni, 'categorieDisponibili': categorie, 'approvazioni': approvazioni, 'giorni': giorni, 'categorie': categorie})
 
 @login_required(login_url='/login/')
 def success_view(request, idcorso):
-	return HttpResponse('Iscrizione effettuata (rifai la grafica di questa pagina)')
+	giorni = Giorno.objects.all()
+	categorie = Categoria.objects.all()
+	return render(request, 'success.html', {'message': 'operazione effettuata con successo', 'giorni': giorni, 'categorie': categorie})
 
 def login_page(request):
 	if request.method == 'GET':
@@ -71,61 +76,8 @@ def create_corso(request):
 			is_progressive = True
 		else:
 			is_progressive = False
-
 		risposta = methods.Corso_Delegate().create_corso(request, titolo, descrizione, is_progressive, fasce, ospiti, aula, classi, categoria)
 		return JsonResponse(risposta)
-
-@login_required(login_url='/login/')
-def informazioni(request):
-	return render(request, 'corsi/informazioni.html', {})
-
-@login_required(login_url='/login/')
-def dettagli(request, idcorso):
-	corso = Corso.objects.get(pk=idcorso)
-	return render(request, 'corsi/dettagli.html', {'corso': corso, 'fasce': corso.fasce.all(), 'studenti': corso.ospitanti.all(), 'iscritti': corso.iscritti.count()})
-
-@login_required(login_url='/login/')
-def appello(request, idcorso):
-	corso = Corso.objects.get(pk=idcorso)
-	studente = Utente.objects.get(user=request.user)
-	if (studente == corso.creatore) == False:
-		return HttpResponse('Solo il creatore del corso può vedere gli appelli')
-	iscritti = corso.iscritti.all()
-	return render(request, 'corsi/appelli.html', {'iscritti': iscritti})
-
-@login_required(login_url='/login/')
-def home(request):
-	giorni = Giorno.objects.all()
-	categorie = Categoria.objects.all()
-	u = Utente.objects.get(user=request.user)
-	approvazioni = Approvazione.objects.filter(studente=u).filter(approva=False)
-	return render(request, 'corsi/home.html', {'giorniDellaSettimana': giorni, 'categorieDisponibili': categorie, 'approvazioni': approvazioni, 'giorni': giorni, 'categorie': categorie})
-
-@login_required(login_url='/login/')
-def iscrizione(request, idcorso):
-	if request.method == 'GET':
-		giorni = Giorno.objects.all()
-		categorie = Categoria.objects.all()
-		corso_iscrizione = Corso.objects.get(pk=int(idcorso))
-		return render(request, 'corsi/iscrizione.html', {'corso': corso_iscrizione, 'giorni': giorni, 'categorie': categorie, 'fasce': corso_iscrizione.fasce.all(), 'iscritti': corso_iscrizione.iscritti.count()})
-	elif request.method == 'POST':
-		id_corso = request.POST.get("id_corso", "")
-		if (id_corso == id_corso) == False:
-			return JsonResponse({'error': 'internal server error (500).'})
-		studente = Utente.objects.get(user=request.user)
-		risposta = methods.Corso_Delegate().iscrivi_studente(studente.id, idcorso)
-		return JsonResponse(risposta)
-
-
-#ottimizza e migliora la grafica
-@login_required(login_url='/login/')
-def rimuovi_iscrizione(request, idcorso):
-	corso = Corso.objects.filter(pk=idcorso)
-	if corso.count() > 0:
-		response = methods.Corso_Delegate.disicrivi_studente(request.user, Corso.objects.get(pk=idcorso))
-		if response == False:
-			return HttpResponse('Il corso non è stato trovato o non è stato possibile disiscrivervi poichè sei nello staff del corso')
-	return redirect('/mieicorsi/')
 
 @login_required(login_url='/login/')
 def rimuovi_corso(request, idcorso):
@@ -155,6 +107,31 @@ def accetta_corso(request, idapprovazione):
 	else:
 		return render(request, 'success.html', {'message': 'è avvenuto un errore durante la registrazione', 'giorni': giorni, 'categorie': categorie})
 
+@login_required(login_url='/login/')
+def iscrizione(request, idcorso):
+	if request.method == 'GET':
+		giorni = Giorno.objects.all()
+		categorie = Categoria.objects.all()
+		corso_iscrizione = Corso.objects.get(pk=int(idcorso))
+		return render(request, 'corsi/iscrizione.html', {'corso': corso_iscrizione, 'giorni': giorni, 'categorie': categorie, 'fasce': corso_iscrizione.fasce.all(), 'iscritti': corso_iscrizione.iscritti.count()})
+	elif request.method == 'POST':
+		id_corso = request.POST.get("id_corso", "")
+		if (id_corso == id_corso) == False:
+			return JsonResponse({'error': 'internal server error (500).'})
+		studente = Utente.objects.get(user=request.user)
+		risposta = methods.Corso_Delegate().iscrivi_studente(studente.id, idcorso)
+		return JsonResponse(risposta)
+
+
+#ottimizza e migliora la grafica
+@login_required(login_url='/login/')
+def rimuovi_iscrizione(request, idcorso):
+	corso = Corso.objects.filter(pk=idcorso)
+	if corso.count() > 0:
+		response = methods.Corso_Delegate.disicrivi_studente(request.user, Corso.objects.get(pk=idcorso))
+		if response == False:
+			return HttpResponse('Il corso non è stato trovato o non è stato possibile disiscrivervi poichè sei nello staff del corso')
+	return redirect('/mieicorsi/')
 
 @login_required(login_url='/login/')
 def corsi(request):
@@ -185,3 +162,21 @@ def filtra_giorni(request, giorno):
 	categorie = Categoria.objects.all()
 	corsi = Corso.objects.filter(fasce__giorno=Giorno.objects.get(giorno_della_settimana=giorno))
 	return render(request, 'corsi/corsi.html', {'corsi': corsi, 'giorni': giorni, 'categorie': categorie})
+
+@login_required(login_url='/login/')
+def informazioni(request):
+	return render(request, 'corsi/informazioni.html', {})
+
+@login_required(login_url='/login/')
+def dettagli(request, idcorso):
+	corso = Corso.objects.get(pk=idcorso)
+	return render(request, 'corsi/dettagli.html', {'corso': corso, 'fasce': corso.fasce.all(), 'studenti': corso.ospitanti.all(), 'iscritti': corso.iscritti.count()})
+
+@login_required(login_url='/login/')
+def appello(request, idcorso):
+	corso = Corso.objects.get(pk=idcorso)
+	studente = Utente.objects.get(user=request.user)
+	if (studente == corso.creatore) == False:
+		return HttpResponse('Solo il creatore del corso può vedere gli appelli')
+	iscritti = corso.iscritti.all()
+	return render(request, 'corsi/appelli.html', {'iscritti': iscritti})
