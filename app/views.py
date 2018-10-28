@@ -116,7 +116,7 @@ def iscrizione(request, idcorso):
 		return render(request, 'corsi/iscrizione.html', {'corso': corso_iscrizione, 'giorni': giorni, 'categorie': categorie, 'fasce': corso_iscrizione.fasce.all(), 'iscritti': corso_iscrizione.iscritti.count()})
 	elif request.method == 'POST':
 		id_corso = request.POST.get("id_corso", "")
-		if (id_corso == id_corso) == False:
+		if (id_corso == idcorso) == False:
 			return JsonResponse({'error': 'internal server error (500).'})
 		studente = Utente.objects.get(user=request.user)
 		risposta = methods.Corso_Delegate().iscrivi_studente(studente.id, idcorso)
