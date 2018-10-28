@@ -83,6 +83,7 @@ class Corso_Delegate:
         a = Aula.objects.get(nome_aula=aula)
 
         if progressivo == False:
+            
             for fascia in fasce_list:
                 c = Corso(nome=titolo, descrizione=descrizione, is_progressive=progressivo, aula=a, creatore=creatore, convalidato=False, categoria=Categoria.objects.get(nome=categoria))
                 c.save()

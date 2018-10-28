@@ -1,21 +1,14 @@
-#!/usr/bin/env python
 import os
 import sys
+import time
 
-if __name__ == "__main__":
-    os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SettimanaFlessibile.settings")
-    from django.core.management import execute_from_command_line
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "SettimanaFlessibile.settings")
 
-    execute_from_command_line(sys.argv)
+import django
+django.setup()
 
-from app.models import Utente, Corso
-from django.contrib.auth.models import User
+from SettimanaFlessibile import setup
+setup()
 
-print('starting process')
-
-utenti = Utente.objects.all()
-total = utenti.count()
-
-for counter, studente in enumerate(utenti):
-    sys.stdout.write("\r{0}>".format("{0}/{1} -- {2}".format(counter, total, studente)))
-    sys.stdout.flush()
+from app.models import Utente, Corso, Fascia
+from app.methods import Corso_Delegate

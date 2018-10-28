@@ -177,6 +177,6 @@ def appello(request, idcorso):
 	corso = Corso.objects.get(pk=idcorso)
 	studente = Utente.objects.get(user=request.user)
 	if (studente == corso.creatore) == False:
-		return HttpResponse('Solo il creatore del corso può vedere gli appelli')
+		return render(request, 'success.html', {'message': 'solo il creatore del corso può vedere gli appelli per questioni di privacy'})
 	iscritti = corso.iscritti.all()
 	return render(request, 'corsi/appelli.html', {'iscritti': iscritti})
